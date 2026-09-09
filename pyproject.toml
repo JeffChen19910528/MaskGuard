@@ -7,6 +7,8 @@ dependencies = [
     "Pillow>=10.0",
     "pytesseract>=0.3.10",
     "PyYAML>=6.0",
+    "opencv-python-headless>=4.8",
+    "numpy>=1.24",
 ]
 
 [project.scripts]
@@ -22,5 +24,6 @@ include = ["maskguard*"]
 [tool.pytest.ini_options]
 markers = [
     "e2e: real-Tesseract end-to-end pipeline tests; requires the Tesseract binary + language data installed (see README.md). Excluded from the default `pytest` run.",
+    "benchmark: OCR engine benchmark suite (tests/ocr_benchmark/); the full-dataset run requires Tesseract. Excluded from the default `pytest` run — use `pytest -m benchmark`.",
 ]
-addopts = "-m \"not e2e\""
+addopts = "-m \"not e2e and not benchmark\""

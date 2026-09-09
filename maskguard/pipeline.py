@@ -2,6 +2,26 @@
 
 Image -> Preprocess -> OCR -> Detection -> Risk -> Policy -> Redaction
       -> Verification -> Metadata Strip -> Output + Report + Audit Log
+
+Phase 6.1 P0-2 adds one more step after Verification: an INDEPENDENT
+Whole-Image Sanity Scan (`verification.whole_image_sanity`) re-OCRs the
+final image from scratch and checks it for high-risk sensitive-data shapes,
+with no knowledge of what the original Detection pass found. This exists
+only to catch the case Detection found nothing at all (confirmed by the
+Phase 6 benchmark: Passport/BankAccount missed entirely under degraded
+image conditions), so VerificationEngine trivially "PASSED" an empty
+detection set while the raw value was still fully visible. It never
+replaces or re-runs Detection/Risk/Policy, and never touches
+VerificationEngine's own escalation logic — see `apply_sanity_scan()`.
+
+Phase 6.1 P1 adds a lightweight deskew step BEFORE the main Detection-time
+OCR call (confirmed by the Phase 6 benchmark: a mere 6-degree rotation
+dropped recall to 0 for nearly every sensitive type). The deskewed image is
+used ONLY to get better OCR tokens — `preprocessing.map_tokens_to_original`
+immediately maps their bounding boxes back into the untouched original
+image's coordinate space, so Detection/Risk/Policy/Redaction/Verification
+all continue to operate on `image` (never on the deskewed copy) and their
+existing coordinate-space invariant is unaffected.
 """
 from __future__ import annotations
 
@@ -25,10 +45,10 @@ from .models import Detection
 from .ocr.base import IOcrEngine
 from .ocr.tesseract_engine import LocalOcrEngine
 from .policy import PolicyEngine
-from .preprocessing import load_and_normalize
+from .preprocessing import deskew_for_ocr, load_and_normalize, map_tokens_to_original
 from .redaction import RedactionEngine
 from .risk import RiskEngine
-from .verification import VerificationEngine, VerificationResult
+from .verification import VerificationEngine, VerificationResult, WholeImageSanityScanner, apply_sanity_scan
 from .report import build_report, write_report
 
 
@@ -55,6 +75,7 @@ class Pipeline:
         self.verification_engine = VerificationEngine(
             self.ocr_engine, self.redaction_engine, max_retries=config.masking.max_verification_retries
         )
+        self.sanity_scanner = WholeImageSanityScanner(self.ocr_engine)
         self.user_rule_detector = UserRuleDetector(load_user_rules(user_rules_path) if user_rules_path else [])
 
         if config.strict_mode and self.ocr_engine.is_cloud:
@@ -64,7 +85,13 @@ class Pipeline:
         processing_id = f"{datetime.now(timezone.utc):%Y%m%d}-{uuid.uuid4().hex[:8]}"
         image = load_and_normalize(input_path)
 
-        tokens = self.ocr_engine.recognize(image, self.config.ocr.language)
+        # Phase 6.1 P1: OCR sees a deskewed copy; every downstream stage
+        # (Detection onward) sees `image` unchanged, with token bounding
+        # boxes already mapped back into its coordinate space.
+        deskewed = deskew_for_ocr(image)
+        tokens = self.ocr_engine.recognize(deskewed.image, self.config.ocr.language)
+        tokens = map_tokens_to_original(tokens, deskewed.image.size, deskewed.angle_degrees)
+
         detections, keyword_hits = self._detect(tokens)
         detections = self.risk_engine.score(detections, keyword_hits)
         detections = self.policy_engine.decide(detections)
@@ -76,6 +103,16 @@ class Pipeline:
         else:
             redacted = self.redaction_engine.apply(image, detections)
             verification = VerificationResult(status="SKIPPED", attempts=0, residual_count=0)
+
+        # Independent safety net (Phase 6.1 P0-2): runs unconditionally,
+        # regardless of `masking.verification`, since its whole purpose is
+        # catching what Detection-driven verification structurally cannot —
+        # a Detection pass that found nothing at all. Also deskewed (P1) for
+        # the same OCR-accuracy reason as the main pass; the scanner never
+        # uses bounding boxes, so no coordinate mapping is needed here.
+        sanity_input = deskew_for_ocr(redacted).image
+        scan_result = self.sanity_scanner.scan(sanity_input, self.config.ocr.language)
+        verification = apply_sanity_scan(verification, scan_result)
 
         blocked = self.config.strict_mode and verification.status == "FAILED"
 

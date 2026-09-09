@@ -1,0 +1,874 @@
+[
+  {
+    "image": "TaiwanID_clean.png",
+    "category": "TaiwanID",
+    "condition": "clean",
+    "text": "身分證：A123456789",
+    "sensitive": [
+      {
+        "type": "TaiwanID",
+        "bbox": [
+          144,
+          24,
+          177,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "TaiwanID_low_res.png",
+    "category": "TaiwanID",
+    "condition": "low_res",
+    "text": "身分證：A123456789",
+    "sensitive": [
+      {
+        "type": "TaiwanID",
+        "bbox": [
+          144,
+          24,
+          177,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "TaiwanID_blurred.png",
+    "category": "TaiwanID",
+    "condition": "blurred",
+    "text": "身分證：A123456789",
+    "sensitive": [
+      {
+        "type": "TaiwanID",
+        "bbox": [
+          144,
+          24,
+          177,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "TaiwanID_rotated.png",
+    "category": "TaiwanID",
+    "condition": "rotated",
+    "text": "身分證：A123456789",
+    "sensitive": [
+      {
+        "type": "TaiwanID",
+        "bbox": [
+          145,
+          26,
+          178,
+          45
+        ]
+      }
+    ]
+  },
+  {
+    "image": "TaiwanID_font_large.png",
+    "category": "TaiwanID",
+    "condition": "font_large",
+    "text": "身分證：A123456789",
+    "sensitive": [
+      {
+        "type": "TaiwanID",
+        "bbox": [
+          192,
+          24,
+          248,
+          38
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Passport_clean.png",
+    "category": "Passport",
+    "condition": "clean",
+    "text": "護照：PA1234567",
+    "sensitive": [
+      {
+        "type": "Passport",
+        "bbox": [
+          114,
+          24,
+          158,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Passport_low_res.png",
+    "category": "Passport",
+    "condition": "low_res",
+    "text": "護照：PA1234567",
+    "sensitive": [
+      {
+        "type": "Passport",
+        "bbox": [
+          114,
+          24,
+          158,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Passport_blurred.png",
+    "category": "Passport",
+    "condition": "blurred",
+    "text": "護照：PA1234567",
+    "sensitive": [
+      {
+        "type": "Passport",
+        "bbox": [
+          114,
+          24,
+          158,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Passport_rotated.png",
+    "category": "Passport",
+    "condition": "rotated",
+    "text": "護照：PA1234567",
+    "sensitive": [
+      {
+        "type": "Passport",
+        "bbox": [
+          116,
+          27,
+          159,
+          43
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Passport_font_large.png",
+    "category": "Passport",
+    "condition": "font_large",
+    "text": "護照：PA1234567",
+    "sensitive": [
+      {
+        "type": "Passport",
+        "bbox": [
+          150,
+          24,
+          221,
+          37
+        ]
+      }
+    ]
+  },
+  {
+    "image": "BankAccount_clean.png",
+    "category": "BankAccount",
+    "condition": "clean",
+    "text": "銀行帳號：1234567890123",
+    "sensitive": [
+      {
+        "type": "BankAccount",
+        "bbox": [
+          174,
+          24,
+          226,
+          28
+        ]
+      }
+    ]
+  },
+  {
+    "image": "BankAccount_low_res.png",
+    "category": "BankAccount",
+    "condition": "low_res",
+    "text": "銀行帳號：1234567890123",
+    "sensitive": [
+      {
+        "type": "BankAccount",
+        "bbox": [
+          174,
+          24,
+          226,
+          28
+        ]
+      }
+    ]
+  },
+  {
+    "image": "BankAccount_blurred.png",
+    "category": "BankAccount",
+    "condition": "blurred",
+    "text": "銀行帳號：1234567890123",
+    "sensitive": [
+      {
+        "type": "BankAccount",
+        "bbox": [
+          174,
+          24,
+          226,
+          28
+        ]
+      }
+    ]
+  },
+  {
+    "image": "BankAccount_rotated.png",
+    "category": "BankAccount",
+    "condition": "rotated",
+    "text": "銀行帳號：1234567890123",
+    "sensitive": [
+      {
+        "type": "BankAccount",
+        "bbox": [
+          175,
+          26,
+          227,
+          51
+        ]
+      }
+    ]
+  },
+  {
+    "image": "BankAccount_font_large.png",
+    "category": "BankAccount",
+    "condition": "font_large",
+    "text": "銀行帳號：1234567890123",
+    "sensitive": [
+      {
+        "type": "BankAccount",
+        "bbox": [
+          234,
+          24,
+          316,
+          38
+        ]
+      }
+    ]
+  },
+  {
+    "image": "CreditCard_clean.png",
+    "category": "CreditCard",
+    "condition": "clean",
+    "text": "信用卡：4111 1111 1111 1111",
+    "sensitive": [
+      {
+        "type": "CreditCard",
+        "bbox": [
+          144,
+          24,
+          301,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "CreditCard_low_res.png",
+    "category": "CreditCard",
+    "condition": "low_res",
+    "text": "信用卡：4111 1111 1111 1111",
+    "sensitive": [
+      {
+        "type": "CreditCard",
+        "bbox": [
+          144,
+          24,
+          301,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "CreditCard_blurred.png",
+    "category": "CreditCard",
+    "condition": "blurred",
+    "text": "信用卡：4111 1111 1111 1111",
+    "sensitive": [
+      {
+        "type": "CreditCard",
+        "bbox": [
+          144,
+          24,
+          301,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "CreditCard_rotated.png",
+    "category": "CreditCard",
+    "condition": "rotated",
+    "text": "信用卡：4111 1111 1111 1111",
+    "sensitive": [
+      {
+        "type": "CreditCard",
+        "bbox": [
+          146,
+          27,
+          302,
+          58
+        ]
+      }
+    ]
+  },
+  {
+    "image": "CreditCard_font_large.png",
+    "category": "CreditCard",
+    "condition": "font_large",
+    "text": "信用卡：4111 1111 1111 1111",
+    "sensitive": [
+      {
+        "type": "CreditCard",
+        "bbox": [
+          192,
+          24,
+          421,
+          37
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Email_clean.png",
+    "category": "Email",
+    "condition": "clean",
+    "text": "Email：demo.test.user@example.com",
+    "sensitive": [
+      {
+        "type": "Email",
+        "bbox": [
+          130,
+          24,
+          428,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Email_low_res.png",
+    "category": "Email",
+    "condition": "low_res",
+    "text": "Email：demo.test.user@example.com",
+    "sensitive": [
+      {
+        "type": "Email",
+        "bbox": [
+          130,
+          24,
+          428,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Email_blurred.png",
+    "category": "Email",
+    "condition": "blurred",
+    "text": "Email：demo.test.user@example.com",
+    "sensitive": [
+      {
+        "type": "Email",
+        "bbox": [
+          130,
+          24,
+          428,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Email_rotated.png",
+    "category": "Email",
+    "condition": "rotated",
+    "text": "Email：demo.test.user@example.com",
+    "sensitive": [
+      {
+        "type": "Email",
+        "bbox": [
+          132,
+          27,
+          428,
+          75
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Email_font_large.png",
+    "category": "Email",
+    "condition": "font_large",
+    "text": "Email：demo.test.user@example.com",
+    "sensitive": [
+      {
+        "type": "Email",
+        "bbox": [
+          173,
+          24,
+          599,
+          44
+        ]
+      }
+    ]
+  },
+  {
+    "image": "PhoneTW_clean.png",
+    "category": "PhoneTW",
+    "condition": "clean",
+    "text": "電話：0912345678",
+    "sensitive": [
+      {
+        "type": "PhoneTW",
+        "bbox": [
+          114,
+          24,
+          174,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "PhoneTW_low_res.png",
+    "category": "PhoneTW",
+    "condition": "low_res",
+    "text": "電話：0912345678",
+    "sensitive": [
+      {
+        "type": "PhoneTW",
+        "bbox": [
+          114,
+          24,
+          174,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "PhoneTW_blurred.png",
+    "category": "PhoneTW",
+    "condition": "blurred",
+    "text": "電話：0912345678",
+    "sensitive": [
+      {
+        "type": "PhoneTW",
+        "bbox": [
+          114,
+          24,
+          174,
+          27
+        ]
+      }
+    ]
+  },
+  {
+    "image": "PhoneTW_rotated.png",
+    "category": "PhoneTW",
+    "condition": "rotated",
+    "text": "電話：0912345678",
+    "sensitive": [
+      {
+        "type": "PhoneTW",
+        "bbox": [
+          116,
+          27,
+          175,
+          45
+        ]
+      }
+    ]
+  },
+  {
+    "image": "PhoneTW_font_large.png",
+    "category": "PhoneTW",
+    "condition": "font_large",
+    "text": "電話：0912345678",
+    "sensitive": [
+      {
+        "type": "PhoneTW",
+        "bbox": [
+          150,
+          24,
+          243,
+          37
+        ]
+      }
+    ]
+  },
+  {
+    "image": "APIKey_clean.png",
+    "category": "APIKey",
+    "condition": "clean",
+    "text": "API_KEY=demo_test_key_123456789",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          160,
+          24,
+          379,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "image": "APIKey_low_res.png",
+    "category": "APIKey",
+    "condition": "low_res",
+    "text": "API_KEY=demo_test_key_123456789",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          160,
+          24,
+          379,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "image": "APIKey_blurred.png",
+    "category": "APIKey",
+    "condition": "blurred",
+    "text": "API_KEY=demo_test_key_123456789",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          160,
+          24,
+          379,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "image": "APIKey_rotated.png",
+    "category": "APIKey",
+    "condition": "rotated",
+    "text": "API_KEY=demo_test_key_123456789",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          162,
+          27,
+          380,
+          70
+        ]
+      }
+    ]
+  },
+  {
+    "image": "APIKey_font_large.png",
+    "category": "APIKey",
+    "condition": "font_large",
+    "text": "API_KEY=demo_test_key_123456789",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          214,
+          24,
+          531,
+          44
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Password_clean.png",
+    "category": "Password",
+    "condition": "clean",
+    "text": "password: demo_test_pw_123456",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          173,
+          24,
+          322,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Password_low_res.png",
+    "category": "Password",
+    "condition": "low_res",
+    "text": "password: demo_test_pw_123456",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          173,
+          24,
+          322,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Password_blurred.png",
+    "category": "Password",
+    "condition": "blurred",
+    "text": "password: demo_test_pw_123456",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          173,
+          24,
+          322,
+          31
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Password_rotated.png",
+    "category": "Password",
+    "condition": "rotated",
+    "text": "password: demo_test_pw_123456",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          174,
+          26,
+          323,
+          64
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Password_font_large.png",
+    "category": "Password",
+    "condition": "font_large",
+    "text": "password: demo_test_pw_123456",
+    "sensitive": [
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          232,
+          24,
+          450,
+          44
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Address_clean.png",
+    "category": "Address",
+    "condition": "clean",
+    "text": "地址：台北市中正區忠孝東路100號",
+    "sensitive": [
+      {
+        "type": "Address",
+        "bbox": [
+          114,
+          24,
+          382,
+          28
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Address_low_res.png",
+    "category": "Address",
+    "condition": "low_res",
+    "text": "地址：台北市中正區忠孝東路100號",
+    "sensitive": [
+      {
+        "type": "Address",
+        "bbox": [
+          114,
+          24,
+          382,
+          28
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Address_blurred.png",
+    "category": "Address",
+    "condition": "blurred",
+    "text": "地址：台北市中正區忠孝東路100號",
+    "sensitive": [
+      {
+        "type": "Address",
+        "bbox": [
+          114,
+          24,
+          382,
+          28
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Address_rotated.png",
+    "category": "Address",
+    "condition": "rotated",
+    "text": "地址：台北市中正區忠孝東路100號",
+    "sensitive": [
+      {
+        "type": "Address",
+        "bbox": [
+          116,
+          26,
+          382,
+          67
+        ]
+      }
+    ]
+  },
+  {
+    "image": "Address_font_large.png",
+    "category": "Address",
+    "condition": "font_large",
+    "text": "地址：台北市中正區忠孝東路100號",
+    "sensitive": [
+      {
+        "type": "Address",
+        "bbox": [
+          150,
+          24,
+          535,
+          39
+        ]
+      }
+    ]
+  },
+  {
+    "image": "english_text.png",
+    "category": "english_text",
+    "condition": "clean",
+    "text": "This is a normal English sentence used for OCR testing.",
+    "sensitive": []
+  },
+  {
+    "image": "traditional_chinese_text.png",
+    "category": "traditional_chinese_text",
+    "condition": "clean",
+    "text": "這是一段用於測試的繁體中文句子，不包含任何敏感資料。",
+    "sensitive": []
+  },
+  {
+    "image": "mixed_chinese_english.png",
+    "category": "mixed_chinese_english",
+    "condition": "clean",
+    "text": "Meeting at 3pm 下午三點開會 with 王經理 in Room 5B.",
+    "sensitive": []
+  },
+  {
+    "image": "chinese_labeled_field.png",
+    "category": "chinese_labeled_field",
+    "condition": "clean",
+    "text": "姓名：王小明",
+    "sensitive": [
+      {
+        "type": "PersonalName",
+        "bbox": [
+          114,
+          24,
+          90,
+          28
+        ]
+      }
+    ]
+  },
+  {
+    "image": "normal_non_sensitive_text.png",
+    "category": "normal_non_sensitive_text",
+    "condition": "clean",
+    "text": "本文件僅供內部教學使用，不含個人資料。",
+    "sensitive": []
+  },
+  {
+    "image": "multiple_sensitive_values.png",
+    "category": "multiple_sensitive_values",
+    "condition": "clean",
+    "text": "姓名：王小明 電話：0912345678 Email：demo@example.com 身分證：A123456789 信用卡：4111 1111 1111 1111 API_KEY=demo_test_key_123456789",
+    "sensitive": [
+      {
+        "type": "PersonalName",
+        "bbox": [
+          114,
+          24,
+          90,
+          28
+        ]
+      },
+      {
+        "type": "PhoneTW",
+        "bbox": [
+          114,
+          69,
+          174,
+          27
+        ]
+      },
+      {
+        "type": "Email",
+        "bbox": [
+          130,
+          114,
+          302,
+          31
+        ]
+      },
+      {
+        "type": "TaiwanID",
+        "bbox": [
+          144,
+          159,
+          177,
+          27
+        ]
+      },
+      {
+        "type": "CreditCard",
+        "bbox": [
+          144,
+          204,
+          301,
+          27
+        ]
+      },
+      {
+        "type": "SecretKeyValue",
+        "bbox": [
+          160,
+          249,
+          379,
+          31
+        ]
+      }
+    ]
+  }
+]

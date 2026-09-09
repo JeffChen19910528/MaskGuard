@@ -42,7 +42,17 @@ from .line_matching import LineIndex, tokens_for_span
 
 _FULLWIDTH_OFFSET = 0xFEE0
 _PUNCTUATION_VARIANTS = {
-    "：": ":", "﹕": ":", "︓": ":",
+    # Colon variants: fullwidth (U+FF1A), small form (U+FE55), vertical
+    # presentation form (U+FE13) — plus U+2025 TWO DOT LEADER ("‥"), which
+    # Tesseract 5.4/chi_tra was confirmed (Phase 6 OCR benchmark, the
+    # "Address_clean" false negative) to sometimes render a fullwidth colon
+    # as. It is visually close enough to a colon in this font/size that OCR
+    # picks it over "："/"﹕", but it is NOT covered by any general Unicode
+    # "colon-like punctuation" class, so it has to be listed explicitly like
+    # its siblings above rather than derived — it is not otherwise a
+    # meaningful character in the sensitive-data formats this project
+    # matches (Email/JWT/API keys/etc. never legitimately contain "‥").
+    "：": ":", "﹕": ":", "︓": ":", "‥": ":",
     "；": ";", "﹔": ";",
     "，": ",", "﹐": ",",
     "。": ".", "．": ".",
