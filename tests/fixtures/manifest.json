@@ -1,0 +1,85 @@
+{
+  "email.png": {
+    "expected_types": [
+      "Email"
+    ],
+    "lines": [
+      "Email：demo.test.user@example.com"
+    ]
+  },
+  "phone.png": {
+    "expected_types": [
+      "PhoneTW"
+    ],
+    "lines": [
+      "電話：0912345678"
+    ]
+  },
+  "taiwan_id.png": {
+    "expected_types": [
+      "TaiwanID"
+    ],
+    "lines": [
+      "身分證：A123456789"
+    ]
+  },
+  "credit_card.png": {
+    "expected_types": [
+      "CreditCard"
+    ],
+    "lines": [
+      "信用卡：4111 1111 1111 1111"
+    ]
+  },
+  "api_key.png": {
+    "expected_types": [
+      "SecretKeyValue"
+    ],
+    "lines": [
+      "API_KEY=demo_test_key_123456789"
+    ]
+  },
+  "passport.png": {
+    "expected_types": [
+      "Passport"
+    ],
+    "lines": [
+      "護照：PA1234567"
+    ]
+  },
+  "bank_account.png": {
+    "expected_types": [
+      "BankAccount"
+    ],
+    "lines": [
+      "銀行帳號：1234567890123"
+    ]
+  },
+  "mixed_language.png": {
+    "expected_types": [
+      "PersonalName"
+    ],
+    "lines": [
+      "姓名：Chris Wang 王小明",
+      "Note 備註：this is a bilingual 中英文混合 test line"
+    ]
+  },
+  "mixed_sensitive.png": {
+    "expected_types": [
+      "PersonalName",
+      "PhoneTW",
+      "Email",
+      "TaiwanID",
+      "CreditCard",
+      "SecretKeyValue"
+    ],
+    "lines": [
+      "姓名：王小明",
+      "電話：0912345678",
+      "Email：demo@example.com",
+      "身分證：A123456789",
+      "信用卡：4111 1111 1111 1111",
+      "API_KEY=demo_test_key_123456789"
+    ]
+  }
+}

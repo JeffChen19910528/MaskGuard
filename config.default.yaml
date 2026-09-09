@@ -1,0 +1,21 @@
+ocr:
+  engine: local
+  language:
+    - zh-TW
+    - en
+
+detection:
+  enable_regex: true
+  enable_keyword: true
+  enable_context: true
+  enable_ai: false
+
+masking:
+  default_action: blur
+  critical_action: mask
+  verification: true
+  max_verification_retries: 3
+
+output:
+  format: png
+  preserve_metadata: false
