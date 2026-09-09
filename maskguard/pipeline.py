@@ -33,11 +33,13 @@ from pathlib import Path
 from .audit import AuditLogger
 from .config import Config
 from .detection import (
+    CandidateValueDetector,
     ContextDetector,
     KeywordDetector,
     LocalAiDetector,
     RegexDetector,
     UserRuleDetector,
+    filter_unclaimed,
     load_user_rules,
 )
 from .metadata import strip_metadata
@@ -147,6 +149,14 @@ class Pipeline:
             detections.extend(RegexDetector().detect(tokens))
         if self.config.detection.enable_context:
             detections.extend(ContextDetector().detect(tokens))
+        if self.config.detection.enable_context:
+            # Phase 6.2: structural fallback for Passport/BankAccount when
+            # the label itself is OCR-damaged (see detection/candidate_value.py).
+            # `filter_unclaimed` drops any candidate that overlaps a region
+            # some OTHER detector already classified — this fallback only
+            # ever fills in a gap, never second-guesses an existing result.
+            candidates = CandidateValueDetector().detect(tokens)
+            detections.extend(filter_unclaimed(candidates, detections))
         if self.config.detection.enable_keyword:
             keyword_hits = KeywordDetector().detect(tokens)
         if self.config.detection.enable_ai:

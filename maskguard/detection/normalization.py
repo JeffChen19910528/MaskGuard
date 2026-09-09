@@ -62,6 +62,13 @@ _PUNCTUATION_VARIANTS = {
 _TOKEN_PATTERN = re.compile(r"\S+")
 
 
+def is_colon_like_token(token_text: str) -> bool:
+    """True if an OCR token is a single colon character in any of the
+    variant forms this module already normalizes to ":" (reuses
+    `_PUNCTUATION_VARIANTS`, no separate list to keep in sync)."""
+    return token_text == ":" or _PUNCTUATION_VARIANTS.get(token_text) == ":"
+
+
 def _normalize_char(ch: str) -> str:
     if ch in _PUNCTUATION_VARIANTS:
         return _PUNCTUATION_VARIANTS[ch]

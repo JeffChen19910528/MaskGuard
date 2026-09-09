@@ -43,6 +43,7 @@ from dataclasses import dataclass, field, replace
 
 from PIL.Image import Image
 
+from ..detection.candidate_value import CandidateValueDetector, filter_unclaimed
 from ..detection.context_detector import ContextDetector
 from ..detection.regex_detector import RegexDetector
 from ..ocr.base import IOcrEngine
@@ -78,8 +79,14 @@ class WholeImageSanityScanner:
         self.scan_types = scan_types
 
     def scan(self, image: Image, languages: list[str]) -> SanityScanResult:
+        # Fresh OCR + fresh detection every call — no access to whatever the
+        # original Detection pass found. Phase 6.2 adds CandidateValueDetector
+        # here too, so a Passport/BankAccount value whose label was OCR-
+        # damaged is still caught by this independent safety net, not just
+        # by the main Detection pass.
         tokens = self.ocr_engine.recognize(image, languages)
         found = RegexDetector().detect(tokens) + ContextDetector().detect(tokens)
+        found = found + filter_unclaimed(CandidateValueDetector().detect(tokens), found)
         relevant = [d for d in found if d.type in self.scan_types]
 
         found_types = sorted({d.type for d in relevant})

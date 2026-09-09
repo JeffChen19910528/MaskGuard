@@ -12,7 +12,7 @@ import time
 from dataclasses import asdict, dataclass
 
 from maskguard.config import Config
-from maskguard.detection import ContextDetector, KeywordDetector, RegexDetector
+from maskguard.detection import CandidateValueDetector, ContextDetector, KeywordDetector, RegexDetector, filter_unclaimed
 from maskguard.ocr.base import IOcrEngine
 from maskguard.policy import PolicyEngine
 from maskguard.preprocessing import deskew_for_ocr, load_and_normalize, map_tokens_to_original
@@ -108,6 +108,8 @@ def run_item(
 
     t1 = time.perf_counter()
     detections = RegexDetector().detect(tokens) + ContextDetector().detect(tokens)
+    candidates = CandidateValueDetector().detect(tokens)  # Phase 6.2
+    detections = detections + filter_unclaimed(candidates, detections)
     keyword_hits = KeywordDetector().detect(tokens)
     scored = RiskEngine().score(detections, keyword_hits)
     decided = PolicyEngine(config.masking).decide(scored)
