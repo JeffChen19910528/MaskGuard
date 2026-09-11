@@ -6,39 +6,23 @@ import { DetectionList, type ReviewState } from "../components/DetectionList";
 import { ErrorNotice } from "../components/ErrorNotice";
 import { ImageUploader } from "../components/ImageUploader";
 import { ImageViewer } from "../components/ImageViewer";
+import { LanguageSwitcher } from "../components/LanguageSwitcher";
 import { ManualDetectionForm } from "../components/ManualDetectionForm";
 import type { PendingManualBox } from "../components/ManualBoxOverlay";
 import { PrivacyNotice } from "../components/PrivacyNotice";
 import { ProcessingIndicator } from "../components/ProcessingIndicator";
 import { StatusBanner } from "../components/StatusBanner";
-import { MANUAL_DETECTION_TYPES } from "../utils/reviewTypes";
+import { useLanguage } from "../i18n/LanguageContext";
+import type { Translations } from "../i18n/translations";
+import { MANUAL_DETECTION_TYPE_VALUES } from "../utils/reviewTypes";
 
 type Phase = "idle" | "analyzing" | "analyzed" | "redacting" | "redacted" | "reviewing" | "reviewed";
 
-const NETWORK_ERROR_MESSAGES: Record<string, string> = {
-  INVALID_IMAGE: "上傳的檔案不是有效的圖片格式。",
-  FILE_TOO_LARGE: "檔案超過允許的大小上限。",
-  IMAGE_DIMENSIONS_INVALID: "圖片尺寸超過允許的範圍。",
-  PROCESSING_TIMEOUT: "處理時間過長，請稍後再試。",
-  VALIDATION_ERROR: "請求格式不正確，請重新選擇圖片。",
-  NETWORK_ERROR: "無法連線至 MaskGuard 伺服器，請確認伺服器是否啟動。",
-  CLIENT_TIMEOUT: "等待伺服器回應逾時，請稍後再試。",
-  HTTP_ERROR: "伺服器回應發生非預期錯誤。",
-  INTERNAL_ERROR: "伺服器發生非預期錯誤。",
-  // Phase 8.3
-  INVALID_REVIEW: "人工確認資料無效，請重新分析圖片。",
-  UNKNOWN_DETECTION: "找不到對應的偵測項目，請重新分析圖片。",
-  INVALID_BBOX: "選取的敏感區域無效。",
-  INVALID_DETECTION_TYPE: "選取的敏感資料類型不受支援。",
-  REVIEW_EXPIRED: "人工確認資料已過期，請重新分析圖片。",
-  REVIEW_CONFLICT: "此次人工確認已送出過，請重新分析圖片後再試一次。",
-};
-
-function friendlyMessage(error: unknown): { message: string; requestId: string | null } {
+function friendlyMessage(error: unknown, t: Translations): { message: string; requestId: string | null } {
   if (error instanceof ApiClientError) {
-    return { message: NETWORK_ERROR_MESSAGES[error.code] ?? "發生非預期錯誤，請稍後再試。", requestId: error.requestId };
+    return { message: t.errors[error.code] ?? t.errors.GENERIC, requestId: error.requestId };
   }
-  return { message: "發生非預期錯誤，請稍後再試。", requestId: null };
+  return { message: t.errors.GENERIC, requestId: null };
 }
 
 function createLocalId(): string {
@@ -46,6 +30,7 @@ function createLocalId(): string {
 }
 
 export function Home() {
+  const { t } = useLanguage();
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [phase, setPhase] = useState<Phase>("idle");
@@ -57,12 +42,12 @@ export function Home() {
   const [redactedUrl, setRedactedUrl] = useState<string | null>(null);
   const [redactError, setRedactError] = useState<{ message: string; requestId: string | null } | null>(null);
 
-  // Phase 8.3: Human Review state — entirely LOCAL until "提交人工確認結果"
+  // Phase 8.3: Human Review state — entirely LOCAL until "submit review"
   // is clicked; nothing here reaches the backend a byte at a time.
   const [reviewState, setReviewState] = useState<Map<string, ReviewState>>(new Map());
   const [manualBoxes, setManualBoxes] = useState<PendingManualBox[]>([]);
   const [drawEnabled, setDrawEnabled] = useState(false);
-  const [selectedManualType, setSelectedManualType] = useState(MANUAL_DETECTION_TYPES[0].value);
+  const [selectedManualType, setSelectedManualType] = useState(MANUAL_DETECTION_TYPE_VALUES[0]);
   const [reviewResult, setReviewResult] = useState<ReviewResult | null>(null);
   const [reviewedUrl, setReviewedUrl] = useState<string | null>(null);
   const [reviewError, setReviewError] = useState<{ message: string; requestId: string | null } | null>(null);
@@ -125,7 +110,7 @@ export function Home() {
       setReviewedUrl(null);
       setPhase("analyzed");
     } catch (error) {
-      setAnalyzeError(friendlyMessage(error));
+      setAnalyzeError(friendlyMessage(error, t));
       setPhase("idle");
     }
   }
@@ -145,7 +130,7 @@ export function Home() {
       }
       setPhase("redacted");
     } catch (error) {
-      setRedactError(friendlyMessage(error));
+      setRedactError(friendlyMessage(error, t));
       setPhase("analyzed");
     }
   }
@@ -192,7 +177,7 @@ export function Home() {
       }
       setPhase("reviewed");
     } catch (error) {
-      setReviewError(friendlyMessage(error));
+      setReviewError(friendlyMessage(error, t));
       setPhase("analyzed");
     }
   }
@@ -202,22 +187,23 @@ export function Home() {
   return (
     <main className="app-layout">
       <header className="app-header">
-        <h1>MaskGuard — 圖片敏感資料防護</h1>
+        <h1>{t.app.title}</h1>
+        <LanguageSwitcher />
         <AuthStatus />
         <PrivacyNotice />
       </header>
 
-      <section className="app-layout__image" aria-label="圖片">
+      <section className="app-layout__image" aria-label={t.home.imageAreaLabel}>
         <ImageUploader onFileSelected={handleFileSelected} disabled={isBusy} />
 
-        {!selectedFile && <p className="empty-state">請上傳圖片開始分析</p>}
+        {!selectedFile && <p className="empty-state">{t.home.emptyState}</p>}
 
         {selectedFile && previewUrl && (
           <div className="image-panels">
             <ImageViewer
               src={previewUrl}
-              alt="原始圖片預覽"
-              label="原始圖片"
+              alt={t.home.originalAlt}
+              label={t.home.originalLabel}
               detections={analyzeResult?.detections}
               manualBoxes={manualBoxes}
               onRemoveManualBox={handleRemoveManualBox}
@@ -225,10 +211,10 @@ export function Home() {
               onBoxDrawn={handleBoxDrawn}
             />
             {redactResult?.kind === "image" && redactedUrl && (
-              <ImageViewer src={redactedUrl} alt="遮罩後圖片" label="遮罩後圖片" />
+              <ImageViewer src={redactedUrl} alt={t.home.redactedAlt} label={t.home.redactedLabel} />
             )}
             {reviewResult?.kind === "image" && reviewedUrl && reviewResult.headers.status !== "FAILED" && (
-              <ImageViewer src={reviewedUrl} alt="人工確認後之遮罩圖片" label="遮罩後圖片（人工確認後）" />
+              <ImageViewer src={reviewedUrl} alt={t.home.reviewedAlt} label={t.home.reviewedLabel} />
             )}
           </div>
         )}
@@ -246,10 +232,10 @@ export function Home() {
         )}
       </section>
 
-      <section className="app-layout__results" aria-label="偵測結果">
-        {phase === "analyzing" && <ProcessingIndicator label="分析中…" />}
-        {phase === "redacting" && <ProcessingIndicator label="遮罩處理中…" />}
-        {phase === "reviewing" && <ProcessingIndicator label="人工確認處理中…" />}
+      <section className="app-layout__results" aria-label={t.home.resultsAreaLabel}>
+        {phase === "analyzing" && <ProcessingIndicator label={t.home.analyzing} />}
+        {phase === "redacting" && <ProcessingIndicator label={t.home.redacting} />}
+        {phase === "reviewing" && <ProcessingIndicator label={t.home.reviewing} />}
 
         {analyzeError && <ErrorNotice message={analyzeError.message} requestId={analyzeError.requestId} />}
         {redactError && <ErrorNotice message={redactError.message} requestId={redactError.requestId} />}
@@ -258,7 +244,7 @@ export function Home() {
         {analyzeResult && (
           <>
             <StatusBanner status={analyzeResult.status} summary={analyzeResult.summary} detections={analyzeResult.detections} />
-            <h2>偵測結果</h2>
+            <h2>{t.home.detectionResultsHeading}</h2>
             <DetectionList
               detections={analyzeResult.detections}
               reviewState={reviewState}
@@ -270,17 +256,17 @@ export function Home() {
 
         {redactResult?.kind === "blocked" && (
           <div className="blocked-notice" role="alert">
-            <p>輸出已被 MaskGuard 阻擋</p>
+            <p>{t.home.blockedTitle}</p>
             <p>{redactResult.detail.message}</p>
-            {redactResult.detail.verification.needs_human_review && <p>此圖片需要人工確認後才能輸出。</p>}
+            {redactResult.detail.verification.needs_human_review && <p>{t.home.blockedNeedsReview}</p>}
           </div>
         )}
 
         {reviewResult?.kind === "blocked" && (
           <div className="blocked-notice" role="alert">
-            <p>輸出已被 MaskGuard 阻擋</p>
+            <p>{t.home.blockedTitle}</p>
             <p>{reviewResult.detail.message}</p>
-            {reviewResult.detail.verification.needs_human_review && <p>此圖片需要人工確認後才能輸出。</p>}
+            {reviewResult.detail.verification.needs_human_review && <p>{t.home.blockedNeedsReview}</p>}
           </div>
         )}
 
@@ -291,25 +277,25 @@ export function Home() {
             aria-live="polite"
           >
             <p className="status-banner__status">
-              人工確認結果：
-              {reviewResult.headers.status === "PASSED" && "驗證通過"}
-              {reviewResult.headers.status === "NEEDS_REVIEW" && "需要人工確認"}
-              {reviewResult.headers.status === "FAILED" && "驗證未通過，請勿使用此輸出。"}
-              {reviewResult.headers.status === "BLOCKED" && "已阻擋輸出"}
+              {t.home.reviewResultPrefix}
+              {reviewResult.headers.status === "PASSED" && t.home.reviewResultPassed}
+              {reviewResult.headers.status === "NEEDS_REVIEW" && t.home.reviewResultNeedsReview}
+              {reviewResult.headers.status === "FAILED" && t.home.reviewResultFailed}
+              {reviewResult.headers.status === "BLOCKED" && t.home.reviewResultBlocked}
             </p>
           </div>
         )}
       </section>
 
-      <section className="app-layout__actions" aria-label="操作">
+      <section className="app-layout__actions" aria-label={t.home.actionsAreaLabel}>
         <button type="button" onClick={handleAnalyze} disabled={!selectedFile || isBusy}>
-          開始分析
+          {t.home.startAnalyze}
         </button>
         <button type="button" onClick={handleRedact} disabled={!analyzeResult || isBusy}>
-          執行遮罩
+          {t.home.runRedact}
         </button>
         <button type="button" onClick={handleSubmitReview} disabled={!analyzeResult?.review_token || isBusy}>
-          提交人工確認結果
+          {t.home.submitReview}
         </button>
       </section>
     </main>

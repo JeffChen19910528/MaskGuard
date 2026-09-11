@@ -6,23 +6,37 @@
  * must never be authoritative") — sending a type not on the backend's own
  * list is rejected with `INVALID_DETECTION_TYPE` even if it were somehow
  * added here.
+ *
+ * Only the VALUE list is defined here (the exact Core type string, never
+ * localized) — the display label is looked up from the current
+ * `Translations.manualTypes` (i18n/translations.ts) so it follows the
+ * user's chosen language.
  */
+import type { Translations } from "../i18n/translations";
 
 export interface ManualTypeOption {
   value: string; // exact Core type string — must match the backend allowlist
-  label: string; // Traditional Chinese display label
+  label: string;
 }
 
-export const MANUAL_DETECTION_TYPES: ManualTypeOption[] = [
-  { value: "TaiwanID", label: "身分證字號" },
-  { value: "Passport", label: "護照號碼" },
-  { value: "BankAccount", label: "銀行帳號" },
-  { value: "CreditCard", label: "信用卡號" },
-  { value: "SecretKeyValue", label: "密碼 / API 金鑰" },
-  { value: "BearerToken", label: "存取權杖（Bearer Token）" },
-  { value: "JWT", label: "JWT" },
-  { value: "Email", label: "電子郵件" },
-  { value: "Phone", label: "電話號碼" },
-  { value: "PersonalName", label: "姓名" },
-  { value: "Address", label: "地址" },
+export const MANUAL_DETECTION_TYPE_VALUES: string[] = [
+  "TaiwanID",
+  "Passport",
+  "BankAccount",
+  "CreditCard",
+  "SecretKeyValue",
+  "BearerToken",
+  "JWT",
+  "Email",
+  "Phone",
+  "PersonalName",
+  "Address",
 ];
+
+export function manualDetectionTypeLabel(value: string, t: Translations): string {
+  return t.manualTypes[value] ?? value;
+}
+
+export function manualDetectionTypeOptions(t: Translations): ManualTypeOption[] {
+  return MANUAL_DETECTION_TYPE_VALUES.map((value) => ({ value, label: manualDetectionTypeLabel(value, t) }));
+}

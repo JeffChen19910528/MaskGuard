@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { getAuthStatus, logout, type AuthMeResponse } from "../api/client";
+import { useLanguage } from "../i18n/LanguageContext";
 
 /**
  * Phase 10.2: minimal, additive authentication status indicator.
@@ -18,6 +19,7 @@ import { getAuthStatus, logout, type AuthMeResponse } from "../api/client";
  *   without OIDC never links anywhere real).
  */
 export function AuthStatus() {
+  const { t } = useLanguage();
   const [status, setStatus] = useState<AuthMeResponse | null>(null);
 
   useEffect(() => {
@@ -35,7 +37,7 @@ export function AuthStatus() {
   }
 
   if (status.authenticated) {
-    const label = status.display_name || status.email || status.subject || "已登入";
+    const label = status.display_name || status.email || status.subject || t.auth.loggedInFallback;
     const permissions = status.permissions ?? [];
     // Phase 10.3 §39: UX-only signal derived from the backend's own
     // resolved permissions (never re-implemented client-side) — informs
@@ -46,7 +48,7 @@ export function AuthStatus() {
     return (
       <div className="auth-status" aria-live="polite">
         <span className="auth-status__label">{label}</span>
-        {!canReview && <span className="auth-status__note">（無審核權限）</span>}
+        {!canReview && <span className="auth-status__note">{t.auth.noReviewPermission}</span>}
         <button
           type="button"
           className="auth-status__logout"
@@ -54,7 +56,7 @@ export function AuthStatus() {
             void logout().then(() => setStatus({ authenticated: false }));
           }}
         >
-          登出
+          {t.auth.logout}
         </button>
       </div>
     );
@@ -63,7 +65,7 @@ export function AuthStatus() {
   return (
     <div className="auth-status" aria-live="polite">
       <a className="auth-status__login" href="/api/v1/auth/login">
-        登入
+        {t.auth.login}
       </a>
     </div>
   );

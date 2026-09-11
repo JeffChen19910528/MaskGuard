@@ -1,4 +1,5 @@
 import type { DetectionResponse } from "../api/types";
+import { useLanguage } from "../i18n/LanguageContext";
 import { computeDisplayScale, scaleBBox } from "../utils/bbox";
 import { riskColor, riskLabel } from "../utils/presentation";
 
@@ -20,6 +21,7 @@ interface DetectionOverlayProps {
  * or infers a box.
  */
 export function DetectionOverlay({ detections, naturalWidth, naturalHeight, displayWidth, displayHeight }: DetectionOverlayProps) {
+  const { t } = useLanguage();
   if (naturalWidth <= 0 || naturalHeight <= 0 || displayWidth <= 0 || displayHeight <= 0) {
     return null;
   }
@@ -32,7 +34,7 @@ export function DetectionOverlay({ detections, naturalWidth, naturalHeight, disp
       height={displayHeight}
       viewBox={`0 0 ${displayWidth} ${displayHeight}`}
       role="img"
-      aria-label={`偵測到 ${detections.length} 個標記區域`}
+      aria-label={t.detectionOverlay.ariaLabel(detections.length)}
     >
       {detections.map((detection, index) => {
         const box = scaleBBox(detection.bbox, scale);
@@ -49,7 +51,7 @@ export function DetectionOverlay({ detections, naturalWidth, naturalHeight, disp
               strokeWidth={2}
             >
               <title>
-                {detection.type} — {riskLabel(detection.risk_level)}
+                {detection.type} — {riskLabel(detection.risk_level, t)}
               </title>
             </rect>
           </g>

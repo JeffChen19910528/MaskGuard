@@ -1,16 +1,17 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { ManualDetectionForm } from "./ManualDetectionForm";
-import { MANUAL_DETECTION_TYPES } from "../utils/reviewTypes";
+import { renderWithLanguage } from "../test/renderWithLanguage";
+import { MANUAL_DETECTION_TYPE_VALUES } from "../utils/reviewTypes";
 
 describe("ManualDetectionForm", () => {
   it("only offers the server-authoritative type list (§11)", () => {
-    render(
+    renderWithLanguage(
       <ManualDetectionForm
         drawEnabled={false}
         onToggleDraw={vi.fn()}
-        selectedType={MANUAL_DETECTION_TYPES[0].value}
+        selectedType={MANUAL_DETECTION_TYPE_VALUES[0]}
         onSelectedTypeChange={vi.fn()}
         pendingBoxes={[]}
         onRemove={vi.fn()}
@@ -18,12 +19,12 @@ describe("ManualDetectionForm", () => {
     );
     const select = screen.getByLabelText("敏感資料類型") as HTMLSelectElement;
     const optionValues = Array.from(select.options).map((o) => o.value);
-    expect(optionValues).toEqual(MANUAL_DETECTION_TYPES.map((t) => t.value));
+    expect(optionValues).toEqual(MANUAL_DETECTION_TYPE_VALUES);
   });
 
   it("toggles draw mode on click", async () => {
     const onToggleDraw = vi.fn();
-    render(
+    renderWithLanguage(
       <ManualDetectionForm
         drawEnabled={false}
         onToggleDraw={onToggleDraw}
@@ -38,7 +39,7 @@ describe("ManualDetectionForm", () => {
   });
 
   it("shows a drawing hint only while draw mode is active", () => {
-    const { rerender } = render(
+    const { rerender } = renderWithLanguage(
       <ManualDetectionForm
         drawEnabled={false}
         onToggleDraw={vi.fn()}
@@ -65,7 +66,7 @@ describe("ManualDetectionForm", () => {
 
   it("lists pending manual boxes with a cancel/remove action", async () => {
     const onRemove = vi.fn();
-    render(
+    renderWithLanguage(
       <ManualDetectionForm
         drawEnabled={false}
         onToggleDraw={vi.fn()}

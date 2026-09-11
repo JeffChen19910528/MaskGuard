@@ -1,3 +1,5 @@
+import { useLanguage } from "../i18n/LanguageContext";
+
 interface ErrorNoticeProps {
   message: string;
   requestId?: string | null;
@@ -9,12 +11,13 @@ interface ErrorNoticeProps {
  * traceback (the API client already strips those out; see api/client.ts).
  */
 export function ErrorNotice({ message, requestId }: ErrorNoticeProps) {
+  const { t } = useLanguage();
   return (
     <div className="error-notice" role="alert">
       <p className="error-notice__message">{message}</p>
       {requestId && (
         <p className="error-notice__request-id">
-          請提供以下追蹤編號給系統管理員：
+          {t.errorNotice.requestIdHint}
           <br />
           Request ID: <code>{requestId}</code>
         </p>

@@ -1,7 +1,8 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import { ImageUploader } from "./ImageUploader";
+import { renderWithLanguage as render } from "../test/renderWithLanguage";
 
 function makeFile(name: string, type: string, content = "x"): File {
   return new File([content], name, { type });

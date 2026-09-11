@@ -1,8 +1,9 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { describe, expect, it, vi } from "vitest";
 import type { DetectionResponse } from "../api/types";
 import { DetectionList, type ReviewState } from "./DetectionList";
+import { renderWithLanguage as render } from "../test/renderWithLanguage";
 
 const taiwanIdDetection: DetectionResponse = {
   detection_id: "11111111-1111-1111-1111-111111111111",

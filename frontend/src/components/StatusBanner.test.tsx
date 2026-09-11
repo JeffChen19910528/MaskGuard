@@ -1,7 +1,8 @@
-import { render, screen } from "@testing-library/react";
+import { screen } from "@testing-library/react";
 import { describe, expect, it } from "vitest";
 import type { DetectionResponse, SummaryResponse } from "../api/types";
 import { StatusBanner } from "./StatusBanner";
+import { renderWithLanguage as render } from "../test/renderWithLanguage";
 
 const summary: SummaryResponse = { total_detections: 2, critical_count: 1, needs_review_count: 0, blocked: false };
 const detections: DetectionResponse[] = [

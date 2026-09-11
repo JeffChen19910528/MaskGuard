@@ -1,5 +1,7 @@
 # MaskGuard
 
+**[English](README.md) | [繁體中文](README.zh-TW.md)**
+
 Image sensitive-data detection and redaction pipeline. Detects personal data,
 financial data, credentials, and business-confidential text in images via
 local OCR + rule-based/local-AI classification, then masks/blurs/pixelates it

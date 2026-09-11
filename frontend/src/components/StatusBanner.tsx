@@ -1,4 +1,5 @@
 import type { DetectionResponse, SummaryResponse } from "../api/types";
+import { useLanguage } from "../i18n/LanguageContext";
 import { statusLabel } from "../utils/presentation";
 
 interface StatusBannerProps {
@@ -8,9 +9,10 @@ interface StatusBannerProps {
 }
 
 /**
- * Displays the backend's OWN status/summary verbatim (relabeled to
- * Traditional Chinese for display only — see utils/presentation.ts). Never
- * reinterprets or recomputes a security status (Phase 8.2 §13).
+ * Displays the backend's OWN status/summary verbatim (relabeled for
+ * display only, in the user's chosen language — see
+ * utils/presentation.ts). Never reinterprets or recomputes a security
+ * status (Phase 8.2 §13).
  *
  * The per-level (High/Medium/Low) counts below are a plain presentation
  * COUNT over the `risk_level` label the backend already assigned each
@@ -18,6 +20,7 @@ interface StatusBannerProps {
  * still come straight from the backend's own `summary` object.
  */
 export function StatusBanner({ status, summary, detections }: StatusBannerProps) {
+  const { t } = useLanguage();
   const tone = status === "BLOCKED" || status === "FAILED" ? "danger" : status === "NEEDS_REVIEW" ? "warning" : "ok";
   const highCount = detections.filter((d) => d.risk_level === "HIGH").length;
   const mediumCount = detections.filter((d) => d.risk_level === "MEDIUM").length;
@@ -25,30 +28,32 @@ export function StatusBanner({ status, summary, detections }: StatusBannerProps)
 
   return (
     <div className={`status-banner status-banner--${tone}`} role="status" aria-live="polite">
-      <p className="status-banner__status">狀態：{statusLabel(status)}</p>
+      <p className="status-banner__status">
+        {t.statusBanner.statusLabel}：{statusLabel(status, t)}
+      </p>
       <dl className="status-banner__summary">
         <div>
-          <dt>偵測項目</dt>
+          <dt>{t.statusBanner.totalDetections}</dt>
           <dd data-testid="count-total">{summary.total_detections}</dd>
         </div>
         <div>
-          <dt>Critical</dt>
+          <dt>{t.statusBanner.critical}</dt>
           <dd data-testid="count-critical">{summary.critical_count}</dd>
         </div>
         <div>
-          <dt>High</dt>
+          <dt>{t.statusBanner.high}</dt>
           <dd data-testid="count-high">{highCount}</dd>
         </div>
         <div>
-          <dt>Medium</dt>
+          <dt>{t.statusBanner.medium}</dt>
           <dd data-testid="count-medium">{mediumCount}</dd>
         </div>
         <div>
-          <dt>Low</dt>
+          <dt>{t.statusBanner.low}</dt>
           <dd data-testid="count-low">{lowCount}</dd>
         </div>
         <div>
-          <dt>需人工確認</dt>
+          <dt>{t.statusBanner.needsReview}</dt>
           <dd data-testid="count-needs-review">{summary.needs_review_count}</dd>
         </div>
       </dl>

@@ -5,8 +5,14 @@
  * decision was already made by PolicyEngine before the frontend ever saw
  * this response. Every value here always ships with a paired text label,
  * so meaning is never color-only (accessibility, §23).
+ *
+ * `riskLabel`/`statusLabel` take the current `Translations` object (see
+ * i18n/LanguageContext.tsx) so the DISPLAYED text follows the user's
+ * chosen language — the underlying `RiskLevel`/`OverallStatus` values
+ * themselves are never localized (they're the backend's own enum).
  */
 import type { OverallStatus, RiskLevel } from "../api/types";
+import type { Translations } from "../i18n/translations";
 
 export const RISK_COLORS: Record<RiskLevel, string> = {
   CRITICAL: "#c62828", // strong red
@@ -15,29 +21,14 @@ export const RISK_COLORS: Record<RiskLevel, string> = {
   LOW: "#1565c0", // neutral blue
 };
 
-export const RISK_LABELS: Record<RiskLevel, string> = {
-  CRITICAL: "CRITICAL（極高風險）",
-  HIGH: "HIGH（高風險）",
-  MEDIUM: "MEDIUM（中風險）",
-  LOW: "LOW（低風險）",
-};
-
-export const STATUS_LABELS: Record<OverallStatus, string> = {
-  PASSED: "分析完成",
-  NEEDS_REVIEW: "需要人工確認",
-  BLOCKED: "已阻擋輸出",
-  FAILED: "處理失敗",
-  SKIPPED: "已略過驗證",
-};
-
 export function riskColor(level: RiskLevel): string {
   return RISK_COLORS[level] ?? RISK_COLORS.LOW;
 }
 
-export function riskLabel(level: RiskLevel): string {
-  return RISK_LABELS[level] ?? level;
+export function riskLabel(level: RiskLevel, t: Translations): string {
+  return t.presentation.risk[level] ?? level;
 }
 
-export function statusLabel(status: OverallStatus | string): string {
-  return (STATUS_LABELS as Record<string, string>)[status] ?? status;
+export function statusLabel(status: OverallStatus | string, t: Translations): string {
+  return (t.presentation.status as Record<string, string>)[status] ?? status;
 }

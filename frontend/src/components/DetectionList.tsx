@@ -1,5 +1,6 @@
 import { useState } from "react";
 import type { DetectionResponse, ReviewStatus } from "../api/types";
+import { useLanguage } from "../i18n/LanguageContext";
 import { riskColor, riskLabel } from "../utils/presentation";
 
 export interface ReviewState {
@@ -13,17 +14,11 @@ interface DetectionListProps {
    * `detection_id`. `undefined` -> read-only display (Phase 8.2 behavior,
    * used before a review session starts). Passing this prop turns the list
    * interactive (accept/reject buttons appear). Nothing here is sent to
-   * the backend until Home.tsx's "提交人工確認結果" action collects it. */
+   * the backend until Home.tsx's "submit review" action collects it. */
   reviewState?: Map<string, ReviewState>;
   onAccept?: (detectionId: string) => void;
   onReject?: (detectionId: string, reason: string) => void;
 }
-
-const STATUS_LABELS: Record<ReviewStatus, string> = {
-  PENDING: "待確認",
-  ACCEPTED: "已確認",
-  REJECTED: "標記為誤判",
-};
 
 /**
  * Side/lower panel listing every detection. Renders ONLY the fields the
@@ -38,12 +33,13 @@ const STATUS_LABELS: Record<ReviewStatus, string> = {
  * outcome, computes a risk level, or calls the backend itself.
  */
 export function DetectionList({ detections, reviewState, onAccept, onReject }: DetectionListProps) {
+  const { t } = useLanguage();
   if (detections.length === 0) {
-    return <p className="detection-list__empty">未偵測到需要處理的敏感資料</p>;
+    return <p className="detection-list__empty">{t.detectionList.empty}</p>;
   }
 
   return (
-    <ul className="detection-list" aria-label="偵測結果">
+    <ul className="detection-list" aria-label={t.detectionList.ariaLabel}>
       {detections.map((detection) => (
         <DetectionListItem
           key={detection.detection_id}
@@ -65,6 +61,7 @@ function DetectionListItem({
   onAccept?: (detectionId: string) => void;
   onReject?: (detectionId: string, reason: string) => void;
 }) {
+  const { t } = useLanguage();
   const [showReasonInput, setShowReasonInput] = useState(false);
   const [reasonDraft, setReasonDraft] = useState("");
   const interactive = review !== undefined;
@@ -74,35 +71,35 @@ function DetectionListItem({
       <div className="detection-list__header">
         <span className="detection-list__type">{detection.type}</span>
         <span className="detection-list__badge" style={{ backgroundColor: riskColor(detection.risk_level) }}>
-          {riskLabel(detection.risk_level)}
+          {riskLabel(detection.risk_level, t)}
         </span>
       </div>
       <div className="detection-list__meta">
-        <span>處理方式：{detection.action}</span>
-        <span>信心度：{detection.confidence.toFixed(2)}</span>
-        <span>來源：自動偵測</span>
+        <span>{t.detectionList.actionLabel}：{detection.action}</span>
+        <span>{t.detectionList.confidenceLabel}：{detection.confidence.toFixed(2)}</span>
+        <span>{t.detectionList.sourceAuto}</span>
       </div>
-      {detection.needs_review && <p className="detection-list__review">此項目需要人工確認</p>}
+      {detection.needs_review && <p className="detection-list__review">{t.detectionList.needsReviewNote}</p>}
 
       {interactive && review && (
         <div className="detection-list__review-controls">
-          <p className="detection-list__review-status">狀態：{STATUS_LABELS[review.status]}</p>
+          <p className="detection-list__review-status">{t.detectionList.statusLabel}：{t.detectionList.status[review.status]}</p>
           {review.status === "REJECTED" && review.reason && (
-            <p className="detection-list__reject-reason">原因：{review.reason}</p>
+            <p className="detection-list__reject-reason">{t.detectionList.reasonLabel}：{review.reason}</p>
           )}
           {!showReasonInput && review.status === "PENDING" && (
             <div className="detection-list__actions">
               <button type="button" onClick={() => onAccept?.(detection.detection_id)}>
-                ✓ 確認處理
+                {t.detectionList.accept}
               </button>
               <button type="button" onClick={() => setShowReasonInput(true)}>
-                ✕ 誤判
+                {t.detectionList.reject}
               </button>
             </div>
           )}
           {showReasonInput && (
             <div className="detection-list__reason-form">
-              <label htmlFor={`reason-${detection.detection_id}`}>請說明誤判原因</label>
+              <label htmlFor={`reason-${detection.detection_id}`}>{t.detectionList.reasonPrompt}</label>
               <input
                 id={`reason-${detection.detection_id}`}
                 type="text"
@@ -120,10 +117,10 @@ function DetectionListItem({
                     setReasonDraft("");
                   }}
                 >
-                  送出誤判原因
+                  {t.detectionList.submitReason}
                 </button>
                 <button type="button" onClick={() => setShowReasonInput(false)}>
-                  取消
+                  {t.detectionList.cancel}
                 </button>
               </div>
             </div>

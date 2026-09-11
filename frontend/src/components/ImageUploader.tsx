@@ -1,4 +1,5 @@
 import { useId, useRef, useState, type ChangeEvent, type DragEvent } from "react";
+import { useLanguage } from "../i18n/LanguageContext";
 import { validateSelectedFile } from "../utils/validation";
 
 interface ImageUploaderProps {
@@ -14,6 +15,7 @@ interface ImageUploaderProps {
  * backend re-validates authoritatively.
  */
 export function ImageUploader({ onFileSelected, disabled }: ImageUploaderProps) {
+  const { t } = useLanguage();
   const [isDragActive, setIsDragActive] = useState(false);
   const [localError, setLocalError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -21,9 +23,9 @@ export function ImageUploader({ onFileSelected, disabled }: ImageUploaderProps) 
 
   function handleFile(file: File | undefined | null) {
     if (!file) return;
-    const result = validateSelectedFile(file);
+    const result = validateSelectedFile(file, t);
     if (!result.ok) {
-      setLocalError(result.message ?? "無法使用此檔案。");
+      setLocalError(result.message ?? t.uploader.errorGeneric);
       return;
     }
     setLocalError(null);
@@ -64,7 +66,7 @@ export function ImageUploader({ onFileSelected, disabled }: ImageUploaderProps) 
           }
         }}
       >
-        <label htmlFor={inputId}>選擇圖片，或將圖片拖曳至此</label>
+        <label htmlFor={inputId}>{t.uploader.dropzoneLabel}</label>
         <input
           ref={inputRef}
           id={inputId}
@@ -74,7 +76,7 @@ export function ImageUploader({ onFileSelected, disabled }: ImageUploaderProps) 
           disabled={disabled}
         />
         <p id={`${inputId}-hint`} className="uploader-hint">
-          支援 PNG、JPEG、WEBP、BMP、TIFF
+          {t.uploader.hint}
         </p>
       </div>
       {localError && (

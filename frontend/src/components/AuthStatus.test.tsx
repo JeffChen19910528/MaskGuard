@@ -1,7 +1,8 @@
-import { render, screen, waitFor } from "@testing-library/react";
+import { screen, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { AuthStatus } from "./AuthStatus";
+import { renderWithLanguage as render } from "../test/renderWithLanguage";
 
 describe("AuthStatus (Phase 10.2)", () => {
   beforeEach(() => {
