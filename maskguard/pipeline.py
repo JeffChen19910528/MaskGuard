@@ -30,6 +30,8 @@ from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+from PIL.Image import Image
+
 from .audit import AuditLogger
 from .config import Config
 from .detection import (
@@ -39,6 +41,7 @@ from .detection import (
     LocalAiDetector,
     RegexDetector,
     UserRuleDetector,
+    canonicalize_types,
     filter_unclaimed,
     load_user_rules,
 )
@@ -98,6 +101,39 @@ class Pipeline:
         detections = self.risk_engine.score(detections, keyword_hits)
         detections = self.policy_engine.decide(detections)
 
+        return self.redact_verify_and_finalize(processing_id, input_path, image, detections, output_image_path, report_path, log_path)
+
+    def redact_verify_and_finalize(
+        self,
+        processing_id: str,
+        input_path: str,
+        image: Image,
+        detections: list[Detection],
+        output_image_path: str,
+        report_path: str,
+        log_path: str,
+    ) -> ProcessResult:
+        """The back half of `process()` — Redaction -> Verification ->
+        Whole-Image Sanity Scan -> metadata strip -> output/report/audit —
+        extracted as its own reusable entry point (Phase 8.3 §43).
+
+        Why this exists: Human Review (`maskguard/api/review_service.py`)
+        needs to run this EXACT tail against a `detections` list it built
+        from a trusted, already-scored/decided source (a signed review
+        context reconstructed from a prior `process()` run's own output,
+        plus any newly Risk/Policy-scored manual additions — see
+        review_service.py) rather than from a fresh OCR/Detection/Risk/
+        Policy pass. Duplicating this ~35-line tail in the API layer would
+        risk the review path's Verification/SanityScan/Strict-Mode-
+        blocking/audit-logging behavior silently drifting from the normal
+        path's over time; extracting it here instead guarantees both paths
+        share the identical implementation. `process()`'s own behavior is
+        byte-for-byte unchanged — every statement below is copied verbatim
+        from what used to be the second half of `process()` — this is a
+        pure extract-method refactor, not a semantic change, and every
+        Core security engine call (Redaction/Verification/PolicyEngine's
+        Strict-Mode-blocked decision) is untouched.
+        """
         if self.config.masking.verification:
             redacted, verification = self.verification_engine.verify_and_fix(
                 image, detections, self.config.ocr.language
@@ -163,4 +199,11 @@ class Pipeline:
             detections.extend(LocalAiDetector().detect(tokens, keyword_hits))
 
         detections.extend(self.user_rule_detector.detect(tokens))
+
+        # Phase 6.3: normalize type identity (e.g. RegexDetector's "PhoneTW"
+        # vs. ContextDetector's "Phone" for the same value) BEFORE Risk/Policy
+        # ever see it, so RiskEngine._merge_overlapping's existing same-type
+        # overlap dedup can actually merge the duplicate instead of scoring
+        # it twice under two different type names. See detection/canonicalize.py.
+        canonicalize_types(detections)
         return detections, keyword_hits

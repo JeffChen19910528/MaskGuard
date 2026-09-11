@@ -44,6 +44,7 @@ from dataclasses import dataclass, field, replace
 from PIL.Image import Image
 
 from ..detection.candidate_value import CandidateValueDetector, filter_unclaimed
+from ..detection.canonicalize import canonicalize_types
 from ..detection.context_detector import ContextDetector
 from ..detection.regex_detector import RegexDetector
 from ..ocr.base import IOcrEngine
@@ -53,7 +54,10 @@ from .verification_engine import VerificationResult
 # Additional types worth flagging beyond RiskEngine's own intrinsic-critical
 # set (Skill.md §12 High tier) — the benchmark brief explicitly asked this
 # scan to also cover Phone/Email, which RiskEngine treats as non-critical.
-_ADDITIONAL_SCAN_TYPES = frozenset({"Email", "PhoneTW"})
+# "Phone" here is the Phase 6.3 canonical type — RegexDetector's raw
+# "PhoneTW" output is rewritten to "Phone" by `canonicalize_types` below
+# before this set is checked, so listing "PhoneTW" here would never match.
+_ADDITIONAL_SCAN_TYPES = frozenset({"Email", "Phone"})
 
 #: Sensitive types this scan looks for. Deliberately reuses
 #: `intrinsic_critical.INTRINSIC_CRITICAL_TYPES` (TaiwanID, Passport,
@@ -87,6 +91,7 @@ class WholeImageSanityScanner:
         tokens = self.ocr_engine.recognize(image, languages)
         found = RegexDetector().detect(tokens) + ContextDetector().detect(tokens)
         found = found + filter_unclaimed(CandidateValueDetector().detect(tokens), found)
+        canonicalize_types(found)
         relevant = [d for d in found if d.type in self.scan_types]
 
         found_types = sorted({d.type for d in relevant})
@@ -117,7 +122,7 @@ def apply_sanity_scan(verification_result: VerificationResult, scan_result: Sani
             residual_types=residual_types,
         )
 
-    # Non-critical (Email/PhoneTW) evidence: flag for human review without
+    # Non-critical (Email/Phone) evidence: flag for human review without
     # forcing a hard FAIL — matches how existing non-critical detections are
     # treated elsewhere (blur/partial-mask territory, not full-block territory).
     return replace(verification_result, needs_human_review=True, residual_types=residual_types)

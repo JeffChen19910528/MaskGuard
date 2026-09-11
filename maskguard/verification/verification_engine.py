@@ -23,6 +23,7 @@ from dataclasses import dataclass, field
 
 from PIL import Image
 
+from ..detection.canonicalize import canonicalize_types
 from ..detection.regex_detector import RegexDetector
 from ..models import Detection, OcrToken, RiskLevel
 from ..ocr.base import IOcrEngine
@@ -130,7 +131,12 @@ class VerificationEngine:
         # (b)/(c) Type-specific regex re-detection (includes e.g. the Luhn
         # check for CreditCard) — catches a same-type sensitive value that
         # OCR'd into a *different* but still clearly sensitive reading.
-        rematches = RegexDetector().detect(crop_tokens)
+        # `detection.type` may already be a Phase 6.3 canonical type (e.g.
+        # "Phone") while a fresh RegexDetector() call still reports its own
+        # raw type (e.g. "PhoneTW") — canonicalize the rematches too, or this
+        # comparison silently stops catching residual matches for any type
+        # that canonicalization renames.
+        rematches = canonicalize_types(RegexDetector().detect(crop_tokens))
         if any(m.type == detection.type for m in rematches):
             return _Outcome.FOUND
 

@@ -1,0 +1,13 @@
+# Phase 9 §42: keep the frontend image's build context to source + lockfile
+# only.
+
+.git
+.claude_recovery
+node_modules
+dist
+.env
+.env.*
+!.env.production
+*.log
+coverage/
+.vscode/

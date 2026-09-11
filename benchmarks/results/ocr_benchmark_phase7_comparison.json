@@ -1,0 +1,148 @@
+{
+  "tesseract": {
+    "overall": {
+      "images": 51,
+      "mean_recall": 1.0,
+      "total_false_negatives": 0,
+      "total_verification_false_pass": 0,
+      "total_false_positives": 0,
+      "mean_precision": 1.0,
+      "mean_iou": 0.8662751619973272,
+      "mean_cer": 0.35056283521260934,
+      "mean_text_accuracy": 0.6555590705632759,
+      "mean_ocr_time_s": 0.5009580568625026,
+      "mean_total_time_s": 1.4708003509771443,
+      "approx_peak_rss_mb": 97.4140625
+    },
+    "recall_by_type": {
+      "TaiwanID": 1.0,
+      "Passport": 1.0,
+      "BankAccount": 1.0,
+      "CreditCard": 1.0,
+      "Email": 1.0,
+      "PhoneTW": 1.0,
+      "APIKey": 1.0,
+      "Password": 1.0,
+      "Address": 1.0
+    },
+    "recall_by_condition": {
+      "clean": {
+        "recall": 1.0,
+        "cer": 0.28366070973168156,
+        "text_accuracy": 0.7163392902683184
+      },
+      "low_res": {
+        "recall": 1.0,
+        "cer": 0.3306162624564085,
+        "text_accuracy": 0.6693837375435914
+      },
+      "blurred": {
+        "recall": 1.0,
+        "cer": 0.3278929509095676,
+        "text_accuracy": 0.6721070490904324
+      },
+      "rotated": {
+        "recall": 1.0,
+        "cer": 0.3300675172211831,
+        "text_accuracy": 0.6830043782036536
+      },
+      "font_large": {
+        "recall": 1.0,
+        "cer": 0.3395450230755005,
+        "text_accuracy": 0.6735268723493361
+      },
+      "Traditional Chinese (labeled field)": {
+        "recall": 1.0,
+        "cer": 1.0,
+        "text_accuracy": 0.0
+      },
+      "Traditional Chinese (plain text, OCR-only)": {
+        "recall": null,
+        "cer": 1.0769230769230769,
+        "text_accuracy": 0.0
+      },
+      "Mixed Language (plain text, OCR-only)": {
+        "recall": null,
+        "cer": 0.19047619047619047,
+        "text_accuracy": 0.8095238095238095
+      }
+    },
+    "cold_vs_warm": {
+      "cold_start_ocr_time_s": 0.4803259999898728,
+      "warm_mean_ocr_time_s": 0.5013706979999552
+    }
+  },
+  "paddleocr": {
+    "overall": {
+      "images": 51,
+      "mean_recall": 0.7836879432624114,
+      "total_false_negatives": 11,
+      "total_verification_false_pass": 5,
+      "total_false_positives": 5,
+      "mean_precision": 0.8809523809523809,
+      "mean_iou": 0.7733297389158882,
+      "mean_cer": 0.35866251490062373,
+      "mean_text_accuracy": 0.6413374850993759,
+      "mean_ocr_time_s": 0.46306231764416833,
+      "mean_total_time_s": 1.0955964999944519,
+      "approx_peak_rss_mb": 546.05859375
+    },
+    "recall_by_type": {
+      "TaiwanID": 1.0,
+      "Passport": 1.0,
+      "BankAccount": 1.0,
+      "CreditCard": 1.0,
+      "Email": 1.0,
+      "PhoneTW": 1.0,
+      "APIKey": 0.0,
+      "Password": 0.0,
+      "Address": 1.0
+    },
+    "recall_by_condition": {
+      "clean": {
+        "recall": 0.7777777777777778,
+        "cer": 0.32771263389004207,
+        "text_accuracy": 0.672287366109958
+      },
+      "low_res": {
+        "recall": 0.7777777777777778,
+        "cer": 0.3422053875132305,
+        "text_accuracy": 0.6577946124867696
+      },
+      "blurred": {
+        "recall": 0.7777777777777778,
+        "cer": 0.3325435517644382,
+        "text_accuracy": 0.6674564482355618
+      },
+      "rotated": {
+        "recall": 0.7777777777777778,
+        "cer": 0.3422053875132305,
+        "text_accuracy": 0.6577946124867696
+      },
+      "font_large": {
+        "recall": 0.7777777777777778,
+        "cer": 0.32771263389004207,
+        "text_accuracy": 0.672287366109958
+      },
+      "Traditional Chinese (labeled field)": {
+        "recall": 1.0,
+        "cer": 0.8333333333333334,
+        "text_accuracy": 0.16666666666666663
+      },
+      "Traditional Chinese (plain text, OCR-only)": {
+        "recall": null,
+        "cer": 0.9615384615384616,
+        "text_accuracy": 0.038461538461538436
+      },
+      "Mixed Language (plain text, OCR-only)": {
+        "recall": null,
+        "cer": 0.19047619047619047,
+        "text_accuracy": 0.8095238095238095
+      }
+    },
+    "cold_vs_warm": {
+      "cold_start_ocr_time_s": 1.4760208000079729,
+      "warm_mean_ocr_time_s": 0.44280314799689224
+    }
+  }
+}

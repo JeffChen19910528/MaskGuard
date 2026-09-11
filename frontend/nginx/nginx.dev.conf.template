@@ -1,0 +1,9 @@
+# Dev topology (Phase 9 §62): plain HTTP, no TLS — `docker compose up --build`.
+# Never used for a production deployment (compose.prod.yml selects
+# nginx.prod.conf.template instead — see docker-entrypoint.sh).
+server {
+    listen 80;
+    server_name _;
+
+    include /etc/nginx/maskguard-conf/common.conf;
+}

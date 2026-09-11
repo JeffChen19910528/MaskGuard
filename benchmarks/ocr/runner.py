@@ -12,7 +12,14 @@ import time
 from dataclasses import asdict, dataclass
 
 from maskguard.config import Config
-from maskguard.detection import CandidateValueDetector, ContextDetector, KeywordDetector, RegexDetector, filter_unclaimed
+from maskguard.detection import (
+    CandidateValueDetector,
+    ContextDetector,
+    KeywordDetector,
+    RegexDetector,
+    canonicalize_types,
+    filter_unclaimed,
+)
 from maskguard.ocr.base import IOcrEngine
 from maskguard.policy import PolicyEngine
 from maskguard.preprocessing import deskew_for_ocr, load_and_normalize, map_tokens_to_original
@@ -22,6 +29,25 @@ from maskguard.verification import VerificationEngine, WholeImageSanityScanner, 
 
 from .dataset import DatasetItem
 from .metrics import DetectionMatch, character_error_rate, match_detections, text_accuracy
+
+try:
+    import psutil  # noqa: PLC0415
+
+    _PROCESS = psutil.Process()
+except ImportError:  # pragma: no cover - memory reporting is best-effort only
+    _PROCESS = None
+
+
+def _current_rss_mb() -> float | None:
+    """Process resident-set size right now, in MB — `None` if `psutil` isn't
+    installed. This is a per-row SNAPSHOT (RSS immediately after processing
+    that image), not a true continuously-sampled peak; `summarize()` reports
+    the max across all rows as an approximate run-level peak (Phase 7 report
+    §Performance/§Memory notes this explicitly as an approximation, not an
+    instrumented peak-RSS measurement)."""
+    if _PROCESS is None:
+        return None
+    return _PROCESS.memory_info().rss / (1024 * 1024)
 
 
 @dataclass
@@ -53,6 +79,8 @@ class BenchmarkRow:
     verification_false_pass: bool  # independent re-check, see runner.py docstring below
     sanity_scan_triggered: bool  # Phase 6.1 P0-2: did the whole-image sanity scan find anything?
     sanity_scan_found_types: str  # comma-joined type names, "" if clean (kept scalar for the CSV column)
+
+    rss_after_mb: float | None = None  # process RSS snapshot after this image (None if psutil unavailable)
 
     def to_dict(self) -> dict:
         return asdict(self)
@@ -110,6 +138,11 @@ def run_item(
     detections = RegexDetector().detect(tokens) + ContextDetector().detect(tokens)
     candidates = CandidateValueDetector().detect(tokens)  # Phase 6.2
     detections = detections + filter_unclaimed(candidates, detections)
+    # Phase 6.3: mirror Pipeline._detect()'s canonicalization step exactly —
+    # this runner is meant to exercise the real production stages, and
+    # skipping this here would reintroduce the Phone/PhoneTW duplicate-type
+    # false positives this phase fixes.
+    canonicalize_types(detections)
     keyword_hits = KeywordDetector().detect(tokens)
     scored = RiskEngine().score(detections, keyword_hits)
     decided = PolicyEngine(config.masking).decide(scored)
@@ -156,6 +189,7 @@ def run_item(
         recall=match.recall,
         precision=match.precision,
         mean_iou=match.mean_iou,
+        rss_after_mb=_current_rss_mb(),
         verification_status=verification.status,
         verification_attempts=verification.attempts,
         verification_residual_count=verification.residual_count,

@@ -50,6 +50,17 @@ def test_scanner_finds_email_as_non_critical_type():
     assert "Email" not in result.found_critical_types  # flagged, but not "critical"
 
 
+def test_scanner_reports_canonical_phone_not_raw_phonetw():
+    # Phase 6.3: RegexDetector's raw "PhoneTW" output must be canonicalized
+    # to "Phone" before SCAN_TYPES is checked, or this scan would silently
+    # stop flagging phone numbers (SCAN_TYPES lists "Phone", not "PhoneTW").
+    scanner = WholeImageSanityScanner(_FixedTokenEngine([_tok("0912345678")]))
+    result = scanner.scan(image=None, languages=["en"])
+    assert "Phone" in result.found_types
+    assert "PhoneTW" not in result.found_types
+    assert not result.clean
+
+
 def test_scanner_reports_clean_when_nothing_sensitive_is_found():
     scanner = WholeImageSanityScanner(_FixedTokenEngine([_tok("hello"), _tok("world", x=60)]))
     result = scanner.scan(image=None, languages=["en"])

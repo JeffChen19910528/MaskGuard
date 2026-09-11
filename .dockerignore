@@ -1,0 +1,41 @@
+# Phase 9 §42: never let the API image's build context include secrets,
+# VCS history, dev tooling, test artifacts, or anything not needed to run
+# MaskGuard Core + the API.
+
+.git
+.gitignore
+.claude
+.claude_recovery
+CLAUDE.md
+Skill.md
+
+# Frontend (built separately, by frontend/Dockerfile)
+frontend/
+
+# Env files / secrets — NEVER copied into any image
+.env
+.env.*
+*.pem
+*.key
+*.crt
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+*.egg-info/
+build/
+dist/
+.venv/
+venv/
+
+# Tests, benchmarks, docs, datasets — not needed at runtime
+tests/
+benchmarks/
+docs/
+scripts/
+tests_output/
+
+# Logs / local artifacts
+*.log

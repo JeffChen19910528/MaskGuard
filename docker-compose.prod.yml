@@ -1,0 +1,155 @@
+# MaskGuard — PRODUCTION stack (Phase 9 §62-64).
+#
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# Differs from docker-compose.yml (dev) in every way that matters for
+# production: HTTPS-only, externalized review-token secret via a Docker
+# secret file (never baked in, never a plain env var), explicit resource
+# limits, and MASKGUARD_ENV=production — which makes the API container
+# FAIL CLOSED at startup (maskguard/api/config.py:validate_production_secret)
+# if the secret file is missing, empty, an obvious placeholder, or too
+# short. There is no insecure fallback: a misconfigured production deploy
+# refuses to start rather than silently running with a weak secret.
+#
+# Prerequisites (see docs/deployment.md):
+#   - secrets/review_token_secret.txt — a real, randomly-generated,
+#     32+ character secret (e.g. `openssl rand -base64 48`). Never commit
+#     this file (see .gitignore).
+#   - certs/cert.pem and certs/key.pem — a real TLS certificate/key for
+#     this deployment's hostname (operator/enterprise-PKI supplied — this
+#     repo never ships one). Never commit these either.
+name: maskguard
+
+networks:
+  maskguard_net:
+    driver: bridge
+
+secrets:
+  review_token_secret:
+    file: ./secrets/review_token_secret.txt
+  # Phase 10.4: optional — only required if AUDIT_ENABLED=true in
+  # production (validate_production_audit_config fails closed otherwise).
+  # `./secrets/audit_integrity_key.txt` must exist for `docker compose
+  # config`/`up` to succeed once referenced by a service below; if you
+  # don't use AUDIT_ENABLED, leave this secret file absent AND remove the
+  # `audit_integrity_key` entry from the `api` service's `secrets:` list.
+  audit_integrity_key:
+    file: ./secrets/audit_integrity_key.txt
+
+# Phase 10.4 §24/§119: durable audit storage — a SEPARATE, PERSISTENT
+# named volume from the ephemeral `/tmp` tmpfs used for image-processing
+# temp files. Never mounted into `frontend`.
+volumes:
+  audit_data:
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MASKGUARD_VERSION: "10.7.0"
+    image: maskguard-api:10.7.0
+    networks:
+      - maskguard_net
+    # See docker-compose.yml's `env_file` comment — same Phase 10.4
+    # correction applied here (Phase 10.2/10.3's OIDC_*/AUTHZ_* variables
+    # were documented but never actually reached the production
+    # container either).
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      MASKGUARD_ENV: production
+      MASKGUARD_REVIEW_TOKEN_SECRET_FILE: /run/secrets/review_token_secret
+      MASKGUARD_MAX_CONCURRENT_JOBS: "4"
+      # CORS stays disabled (empty) in production — the frontend is served
+      # same-origin by the proxy, so no cross-origin browser requests are
+      # expected (§40). Do not set MASKGUARD_CORS_ALLOWED_ORIGINS to "*".
+      # Phase 10.4: harmless when AUDIT_ENABLED is unset/false via .env
+      # (the default, §0) — points at the secret file ONLY so that if an
+      # operator does enable audit, the fail-closed production check
+      # (§32/§79) has something valid to find; ignored otherwise.
+      AUDIT_INTEGRITY_KEY_FILE: /run/secrets/audit_integrity_key
+      AUDIT_DB_PATH: /var/lib/maskguard-audit/audit.db
+      # Phase 10.5 §8/§59/§118: same trusted-proxy reasoning as
+      # docker-compose.yml — `frontend` (Nginx) is the verified sole
+      # ingress to this container. §59: production SHOULD enable rate
+      # limiting; this repo does not force it on by default (matching
+      # the OIDC_ENABLED/AUDIT_ENABLED opt-in precedent, disclosed in
+      # docs/rate-limit-implementation.md "Production configuration") —
+      # set RATE_LIMIT_ENABLED=true in `.env` to turn it on.
+      RATE_LIMIT_TRUST_PROXY_HEADERS: "true"
+    secrets:
+      - review_token_secret
+      - audit_integrity_key
+    # No `ports:` — never published, reached only via `frontend` over
+    # maskguard_net (§1/§37).
+    read_only: true
+    volumes:
+      - audit_data:/var/lib/maskguard-audit
+    tmpfs:
+      - /tmp:size=512m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=2).status == 200 else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 4g
+          pids: 200
+        reservations:
+          memory: 512m
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    image: maskguard-frontend:10.7.0
+    networks:
+      - maskguard_net
+    environment:
+      MASKGUARD_NGINX_MODE: prod
+      API_UPSTREAM: api:8000
+      TLS_CERT_PATH: /run/certs/cert.pem
+      TLS_KEY_PATH: /run/certs/key.pem
+    volumes:
+      # Read-only bind mount of operator-supplied certs — NOT a Docker
+      # secret (those are file-only, fine for the review-token string, but
+      # TLS material is more naturally managed as an operator-owned
+      # directory that can be rotated/renewed without a `docker compose`
+      # redeploy of the secret itself). Never committed (see .gitignore).
+      - ./certs:/run/certs:ro
+    ports:
+      - "443:443"
+      - "80:80"   # HTTP: redirects to HTTPS only (nginx.prod.conf.template) — never serves the app or proxies /api/ over plaintext.
+    depends_on:
+      api:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /var/log/nginx
+      - /etc/nginx/conf.d
+      - /etc/nginx/maskguard-conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256m
+          pids: 50
+        reservations:
+          memory: 32m

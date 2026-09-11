@@ -1,0 +1,105 @@
+annotated-doc==0.0.5
+    # via fastapi
+annotated-types==0.8.0
+    # via pydantic
+anyio==4.15.1
+    # via
+    #   httpx
+    #   httpx2
+    #   starlette
+certifi==2026.7.22
+    # via
+    #   httpcore
+    #   httpx
+cffi==2.1.1
+    # via cryptography
+click==8.5.0
+    # via uvicorn
+cryptography==50.0.1
+    # via pyjwt
+fastapi==0.141.1
+    # via maskguard (pyproject.toml)
+h11==0.16.0
+    # via
+    #   httpcore
+    #   httpcore2
+    #   uvicorn
+httpcore==1.0.9
+    # via httpx
+httpcore2==2.12.0
+    # via httpx2
+httpx==0.28.1
+    # via maskguard (pyproject.toml)
+httpx2==2.12.0
+    # via maskguard (pyproject.toml)
+idna==3.19
+    # via
+    #   anyio
+    #   httpx
+    #   httpx2
+iniconfig==2.3.0
+    # via pytest
+numpy==2.4.6
+    # via
+    #   maskguard (pyproject.toml)
+    #   opencv-python-headless
+opencv-python-headless==5.0.0.93
+    # via maskguard (pyproject.toml)
+packaging==26.3
+    # via
+    #   pytesseract
+    #   pytest
+pillow==12.3.0
+    # via
+    #   maskguard (pyproject.toml)
+    #   pytesseract
+pluggy==1.6.0
+    # via pytest
+pycparser==3.0
+    # via cffi
+pydantic==2.13.5
+    # via
+    #   fastapi
+    #   maskguard (pyproject.toml)
+pydantic-core==2.46.5
+    # via pydantic
+pygments==2.21.0
+    # via pytest
+pyjwt[crypto]==2.13.0
+    # via maskguard (pyproject.toml)
+pytesseract==0.3.13
+    # via maskguard (pyproject.toml)
+pytest==9.1.1
+    # via
+    #   maskguard (pyproject.toml)
+    #   pytest-asyncio
+pytest-asyncio==1.4.0
+    # via maskguard (pyproject.toml)
+python-multipart==0.0.32
+    # via maskguard (pyproject.toml)
+pyyaml==6.0.3
+    # via maskguard (pyproject.toml)
+redis==8.1.0
+    # via maskguard (pyproject.toml)
+starlette==1.6.0
+    # via fastapi
+truststore==0.10.4
+    # via
+    #   httpcore2
+    #   httpx2
+typing-extensions==4.16.0
+    # via
+    #   anyio
+    #   fastapi
+    #   httpx2
+    #   pydantic
+    #   pydantic-core
+    #   pytest-asyncio
+    #   starlette
+    #   typing-inspection
+typing-inspection==0.4.4
+    # via
+    #   fastapi
+    #   pydantic
+uvicorn==0.52.4
+    # via maskguard (pyproject.toml)

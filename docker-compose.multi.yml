@@ -1,0 +1,205 @@
+# MaskGuard — MULTI-INSTANCE profile (Phase 10.6 §58/§116/§173).
+#
+#   docker compose -f docker-compose.multi.yml up -d --build
+#
+# Topology:
+#
+#     Nginx (round-robin, no sticky sessions, §59/§60/§117)
+#      /            \
+#   api-a          api-b
+#      \            /
+#         Redis (shared session/review-replay/rate-limit state)
+#
+# Two INDEPENDENT containers from the SAME image (§58: "do not create
+# separate application implementations") — api-a and api-b differ ONLY in
+# one explicit env var (AUDIT_ENABLED, see below), never in code or image.
+#
+# Audit (§135/§136, read carefully): SQLite + HMAC hash chain (Phase
+# 10.4) is NOT proven safe for concurrent multi-container writers on this
+# architecture — this compose file does NOT attempt it. `api-a` is the
+# DESIGNATED audit writer (AUDIT_ENABLED=true, the audit_data volume
+# mounted); `api-b` explicitly has AUDIT_ENABLED=false and no audit
+# volume at all. This means requests Nginx routes to api-b are NOT
+# recorded in the durable audit trail — an intentional, disclosed Phase
+# 10.6 limitation (docs/distributed-state-implementation.md §11), not a
+# claim of complete multi-instance audit coverage.
+#
+# Prerequisites (see docs/distributed-state-implementation.md):
+#   - secrets/review_token_secret.txt (same convention as docker-compose.prod.yml)
+#   - secrets/audit_integrity_key.txt
+#   - secrets/redis_password.txt — a real, randomly-generated password
+#     (e.g. `openssl rand -base64 32`)
+name: maskguard-multi
+
+networks:
+  maskguard_net:
+    driver: bridge
+
+secrets:
+  review_token_secret:
+    file: ./secrets/review_token_secret.txt
+  audit_integrity_key:
+    file: ./secrets/audit_integrity_key.txt
+  redis_password:
+    file: ./secrets/redis_password.txt
+
+# audit_data: mounted ONLY into api-a (§136, see module docstring above).
+# redis_data: NOT declared — Redis runs with `--appendonly no` and a
+# tmpfs data dir (§154: rate-limit/session/replay state is intentionally
+# EPHEMERAL — see docs/distributed-state-implementation.md §17 "Redis
+# backup" for why persisting it would be actively misleading, not safer).
+volumes:
+  audit_data:
+
+services:
+  # --- Shared state ---------------------------------------------------
+  redis:
+    image: redis:7-alpine@sha256:6ab0b6e7381779332f97b8ca76193e45b0756f38d4c0dcda72dbb3c32061ab99
+    networks:
+      - maskguard_net
+    # §46/§108/§170/§171: no `ports:` — reachable ONLY from api-a/api-b
+    # over the internal Docker network, never the host/Internet.
+    # §48: password sourced from a Docker secret FILE, never baked into
+    # the image/command literal, never logged.
+    # `tr -d '\r'` defends against a secret file saved with CRLF line
+    # endings (e.g. generated on Windows) — `$()` command substitution
+    # only strips trailing `\n`, not a stray `\r`, which would otherwise
+    # make Redis's actual password silently differ by one invisible
+    # character from what every client reads (found and fixed live
+    # during this phase's own Docker validation — see
+    # docs/distributed-state-implementation.md §7).
+    command: >
+      sh -c 'redis-server --requirepass "$$(cat /run/secrets/redis_password | tr -d "\r")"
+      --appendonly no --maxmemory 256mb --maxmemory-policy allkeys-lru
+      --protected-mode yes'
+    secrets:
+      - redis_password
+    read_only: true
+    tmpfs:
+      - /data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "redis-cli -a \"$$(cat /run/secrets/redis_password)\" ping | grep -q PONG"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 320m
+          pids: 50
+        reservations:
+          memory: 64m
+
+  # --- API nodes (§58: identical image, minimal per-node divergence) --
+  api-a: &api-node
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MASKGUARD_VERSION: "10.7.0"
+    image: maskguard-api:10.7.0
+    networks:
+      - maskguard_net
+    env_file:
+      - path: .env
+        required: false
+    environment: &api-a-env
+      MASKGUARD_ENV: production
+      MASKGUARD_REVIEW_TOKEN_SECRET_FILE: /run/secrets/review_token_secret
+      MASKGUARD_MAX_CONCURRENT_JOBS: "4"
+      REDIS_ENABLED: "true"
+      REDIS_URL: "redis://redis:6379/0"
+      REDIS_PASSWORD_FILE: /run/secrets/redis_password
+      RATE_LIMIT_ENABLED: "true"
+      RATE_LIMIT_TRUST_PROXY_HEADERS: "true"
+      # §136: api-a is the DESIGNATED audit writer.
+      AUDIT_ENABLED: "true"
+      AUDIT_INTEGRITY_KEY_FILE: /run/secrets/audit_integrity_key
+      AUDIT_DB_PATH: /var/lib/maskguard-audit/audit.db
+    secrets:
+      - review_token_secret
+      - audit_integrity_key
+      - redis_password
+    depends_on:
+      redis:
+        condition: service_healthy
+    read_only: true
+    volumes:
+      - audit_data:/var/lib/maskguard-audit
+    tmpfs:
+      - /tmp:size=512m
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=2).status == 200 else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 4g
+          pids: 200
+        reservations:
+          memory: 512m
+
+  api-b:
+    <<: *api-node
+    environment:
+      <<: *api-a-env
+      # §136: api-b is explicitly NOT the audit writer — overrides the
+      # anchor's AUDIT_ENABLED (Compose merges map keys; this wins).
+      AUDIT_ENABLED: "false"
+    # Deliberately NO `audit_data` volume mount — api-b physically cannot
+    # write to the audit database even if misconfigured.
+    volumes: []
+    secrets:
+      - review_token_secret
+      - redis_password
+      # audit_integrity_key omitted — api-b never validates/uses it.
+
+  # --- Edge / load balancer -------------------------------------------
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    image: maskguard-frontend:10.7.0
+    networks:
+      - maskguard_net
+    environment:
+      MASKGUARD_NGINX_MODE: dev  # plain HTTP for this local multi-instance demo profile; see docker-compose.prod.yml for TLS — orthogonal to Phase 10.6's own scope
+      API_UPSTREAM: api-a:8000
+      API_UPSTREAM_B: api-b:8000  # §59/§117: enables the 2-server upstream block, round-robin, no sticky sessions
+    ports:
+      - "8081:80"  # distinct host port from docker-compose.yml's 8080 so both profiles can coexist during testing
+    depends_on:
+      api-a:
+        condition: service_healthy
+      api-b:
+        condition: service_healthy
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /var/log/nginx
+      - /etc/nginx/conf.d
+      - /etc/nginx/maskguard-conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256m
+          pids: 50
+        reservations:
+          memory: 32m

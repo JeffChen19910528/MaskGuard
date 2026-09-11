@@ -4,3 +4,10 @@ PyYAML>=6.0
 opencv-python-headless>=4.8
 numpy>=1.24
 pytest>=7.4
+
+# Phase 8.1: HTTP API layer (maskguard/api/) — optional for CLI-only use,
+# see pyproject.toml's `api` extra. Install with: pip install -e ".[api]"
+fastapi>=0.110
+uvicorn>=0.27
+pydantic>=2.0
+python-multipart>=0.0.9

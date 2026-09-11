@@ -26,9 +26,25 @@ class LocalOcrEngine(IOcrEngine):
         codes = [_LANG_MAP.get(lang, lang) for lang in languages]
         return "+".join(codes) if codes else "eng"
 
+    #: Phase 9.3: Tesseract's default PSM (3, fully automatic page
+    #: segmentation) was found — via the Phase 9.2 investigation
+    #: (docs/ocr-boundary-investigation.md) — to sometimes merge a
+    #: label-adjacent punctuation character directly onto a sensitive value
+    #: token (e.g. ":PA1234567" as one token instead of ":" + "PA1234567"),
+    #: which can defeat token-boundary-sensitive detection. PSM 6 ("assume
+    #: a single uniform block of text") was verified, across the complete
+    #: existing 51-image benchmark, to fix that tokenization with zero
+    #: fixture-level regressions (see docs/ocr-boundary-investigation.md
+    #: §12 for the full comparison). Only this one Tesseract config flag
+    #: changes here — language, OEM, and every other call argument are
+    #: untouched.
+    _TESSERACT_CONFIG = "--psm 6"
+
     def recognize(self, image: Image, languages: list[str]) -> list[OcrToken]:
         lang = self._lang_string(languages)
-        data = pytesseract.image_to_data(image, lang=lang, output_type=Output.DICT)
+        data = pytesseract.image_to_data(
+            image, lang=lang, config=self._TESSERACT_CONFIG, output_type=Output.DICT
+        )
 
         tokens: list[OcrToken] = []
         n = len(data.get("text", []))

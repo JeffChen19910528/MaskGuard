@@ -66,6 +66,10 @@ def summarize(rows: list[BenchmarkRow]) -> dict:
     precisions = [r.precision for r in rows if r.precision is not None]
     cers = [r.cer for r in rows]
     times = [r.total_time_s for r in rows]
+    ocr_times = [r.ocr_time_s for r in rows]
+    detect_times = [r.detect_time_s for r in rows]
+    redact_verify_times = [r.redact_verify_time_s for r in rows]
+    rss_values = [r.rss_after_mb for r in rows if r.rss_after_mb is not None]
 
     iou_bands: dict[str, int] = {}
     for r in rows:
@@ -91,6 +95,12 @@ def summarize(rows: list[BenchmarkRow]) -> dict:
         "mean_cer": sum(cers) / len(cers) if cers else None,
         # P3
         "mean_total_time_s": sum(times) / len(times) if times else None,
+        "mean_ocr_time_s": sum(ocr_times) / len(ocr_times) if ocr_times else None,
+        "mean_detect_time_s": sum(detect_times) / len(detect_times) if detect_times else None,
+        "mean_redact_verify_time_s": sum(redact_verify_times) / len(redact_verify_times) if redact_verify_times else None,
+        # Approximate — see runner._current_rss_mb() docstring: a per-row RSS
+        # snapshot, max-reduced here, not a continuously-sampled true peak.
+        "approx_peak_rss_mb": max(rss_values) if rss_values else None,
         "verification_pass_rate": verification_pass_count / len(rows) if rows else None,
     }
 
@@ -112,4 +122,8 @@ def print_summary(rows: list[BenchmarkRow]) -> None:
     print(f"[P2] False Positives (total)            : {summary['total_false_positives']}")
     print(f"[P2] Mean Character Error Rate           : {summary['mean_cer']}")
     print(f"[P3] Mean total processing time (s)     : {summary['mean_total_time_s']}")
+    print(f"     Mean OCR-only time (s)             : {summary['mean_ocr_time_s']}")
+    print(f"     Mean Detect+Risk+Policy time (s)   : {summary['mean_detect_time_s']}")
+    print(f"     Mean Redact+Verify time (s)        : {summary['mean_redact_verify_time_s']}")
+    print(f"     Approx. peak RSS (MB)              : {summary['approx_peak_rss_mb']}")
     print(f"     Verification PASS rate             : {summary['verification_pass_rate']}")

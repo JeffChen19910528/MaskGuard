@@ -1,0 +1,40 @@
+# Production topology (Phase 9 §62-64): HTTPS-terminating, redirects plain
+# HTTP to HTTPS. Certificate/key paths come from the deployment's secret
+# configuration (Docker secrets or a mounted volume — see
+# docs/security-deployment.md "TLS"); this repo never ships or commits an
+# actual cert/key, only these path variables (§10).
+server {
+    listen 80;
+    server_name _;
+    # Only path allowed over plain HTTP in production: an ACME/health probe
+    # equivalent, then redirect everything else to HTTPS. No API traffic,
+    # no static assets, ever served unencrypted in prod.
+    location /healthz {
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name _;
+
+    ssl_certificate     ${TLS_CERT_PATH};
+    ssl_certificate_key ${TLS_KEY_PATH};
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_prefer_server_ciphers off;
+    ssl_session_cache shared:SSL:10m;
+    ssl_session_timeout 1d;
+
+    # HSTS: only sent over the already-encrypted connection — never on the
+    # plain-HTTP :80 server block above (a client that never reaches this
+    # block has no HSTS header set yet on first contact, which is expected;
+    # operators terminating TLS elsewhere, e.g. an upstream load balancer,
+    # can strip this by not using this server block at all).
+    add_header Strict-Transport-Security "max-age=63072000; includeSubDomains" always;
+
+    include /etc/nginx/maskguard-conf/common.conf;
+}

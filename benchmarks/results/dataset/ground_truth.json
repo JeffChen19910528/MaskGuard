@@ -431,7 +431,7 @@
     "text": "電話：0912345678",
     "sensitive": [
       {
-        "type": "PhoneTW",
+        "type": "Phone",
         "bbox": [
           114,
           24,
@@ -448,7 +448,7 @@
     "text": "電話：0912345678",
     "sensitive": [
       {
-        "type": "PhoneTW",
+        "type": "Phone",
         "bbox": [
           114,
           24,
@@ -465,7 +465,7 @@
     "text": "電話：0912345678",
     "sensitive": [
       {
-        "type": "PhoneTW",
+        "type": "Phone",
         "bbox": [
           114,
           24,
@@ -482,7 +482,7 @@
     "text": "電話：0912345678",
     "sensitive": [
       {
-        "type": "PhoneTW",
+        "type": "Phone",
         "bbox": [
           116,
           27,
@@ -499,7 +499,7 @@
     "text": "電話：0912345678",
     "sensitive": [
       {
-        "type": "PhoneTW",
+        "type": "Phone",
         "bbox": [
           150,
           24,
@@ -825,7 +825,7 @@
         ]
       },
       {
-        "type": "PhoneTW",
+        "type": "Phone",
         "bbox": [
           114,
           69,

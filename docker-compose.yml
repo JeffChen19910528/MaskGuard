@@ -1,0 +1,133 @@
+# MaskGuard — development stack (Phase 9 §62): `docker compose up --build`.
+# Plain HTTP, single instance, auto-generated review-token secret (dev
+# semantics — see maskguard/api/config.py). NOT for production; see
+# docker-compose.prod.yml for the hardened topology.
+name: maskguard
+
+networks:
+  maskguard_net:
+    driver: bridge   # dedicated network (§1) — never network_mode: host
+
+# Phase 10.4 §24/§119: durable audit storage — a SEPARATE, PERSISTENT
+# named volume from the ephemeral `/tmp` tmpfs used for image-processing
+# temp files below. Never shares a mount with uploaded/redacted image
+# data. Harmless/unused when AUDIT_ENABLED is unset (the default).
+volumes:
+  audit_data:
+
+services:
+  api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        MASKGUARD_VERSION: "10.7.0"
+    image: maskguard-api:10.7.0
+    networks:
+      - maskguard_net
+    # Phase 10.4 correction (disclosed — see docs/audit-implementation.md
+    # "Docker integration gap found and fixed"): Phase 10.2/10.3
+    # documented OIDC_*/AUTHZ_* variables in `.env.example` but never
+    # actually wired them into either compose file's container
+    # environment — `docker compose` only uses a `.env` file for ITS OWN
+    # `${VAR}` substitution within the YAML, not for injecting arbitrary
+    # host env vars into the container, unless told to. `env_file` fixes
+    # that: every OIDC_*/AUTHZ_*/AUDIT_*/SESSION_* value from `.env`
+    # (untouched if absent — all still default to "disabled/unset",
+    # §0's opt-in pattern) now actually reaches the container. Explicit
+    # `environment:` keys below still take precedence for the same key
+    # (Compose's own merge order), so MASKGUARD_ENV/MAX_CONCURRENT_JOBS
+    # remain hardcoded regardless of `.env` content.
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      MASKGUARD_ENV: development
+      MASKGUARD_MAX_CONCURRENT_JOBS: "4"
+      # Phase 10.5 §8/§118: Nginx (the `frontend` service below) is the
+      # VERIFIED sole ingress to this container — `api` publishes no host
+      # `ports:` at all, so nothing but Nginx can ever reach it. Nginx
+      # unconditionally overwrites `X-Real-IP` with its own
+      # `$remote_addr` (frontend/nginx/common.conf.inc) — a client cannot
+      # make that header carry anything but Nginx's genuine view of the
+      # TCP peer. Safe to trust ONLY in this specific topology; hardcoded
+      # here (not left to `.env`) so this decision can't be silently
+      # disabled by an operator's environment file.
+      RATE_LIMIT_TRUST_PROXY_HEADERS: "true"
+    # No `ports:` — FastAPI is never published to the host/Internet, even
+    # in dev (§1/§37); reached only via the frontend/proxy container over
+    # maskguard_net. Use `docker compose exec api ...` to reach it directly
+    # for local debugging.
+    read_only: true
+    volumes:
+      # §119: real persistent storage, isolated from `/tmp` below and
+      # never mounted into the frontend container (see that service's
+      # own `volumes:`, which has no reference to `audit_data`).
+      - audit_data:/var/lib/maskguard-audit
+    tmpfs:
+      - /tmp:size=512m   # only writable path the app needs for image processing (§13)
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request,sys; sys.exit(0 if urllib.request.urlopen('http://127.0.0.1:8000/api/v1/health', timeout=2).status == 200 else 1)"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 15s
+    # --- Resource limits (§26-28): MEASURED, not arbitrary. `docker stats`
+    # during Phase 9 testing showed ~51MiB idle, and ~2.82GiB peak RSS
+    # under 4 CONCURRENT requests each analyzing a 6000x6000 (36-megapixel,
+    # near the 40MP MASKGUARD_MAX_IMAGE_PIXELS cap) synthetic image — the
+    # worst case this deployment's own MASKGUARD_MAX_CONCURRENT_JOBS=4
+    # setting allows. 4g gives real headroom above that measured peak.
+    # Separately verified (docs/deployment.md "Resource limits"): a
+    # container OOM-killed under a deliberately tight memory limit produces
+    # NO partial/unsafe response at all — the connection is simply reset,
+    # confirmed via `docker inspect --format '{{.State.OOMKilled}}'`.
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 4g
+          pids: 200
+        reservations:
+          memory: 512m
+
+  frontend:
+    build:
+      context: frontend
+      dockerfile: Dockerfile
+    image: maskguard-frontend:10.7.0
+    networks:
+      - maskguard_net
+    environment:
+      MASKGUARD_NGINX_MODE: dev
+      API_UPSTREAM: api:8000
+    ports:
+      - "8080:80"   # dev-only plain HTTP entry point
+    depends_on:
+      api:
+        condition: service_healthy   # never an arbitrary `sleep` (§30)
+    read_only: true
+    tmpfs:
+      - /var/cache/nginx
+      - /var/run
+      - /var/log/nginx
+      - /etc/nginx/conf.d
+      - /etc/nginx/maskguard-conf
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://127.0.0.1/healthz"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    # Measured idle ~15.6MiB; Nginx serving static files + proxying never
+    # approaches API-container territory. 256m is generous headroom.
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 256m
+          pids: 50
+        reservations:
+          memory: 32m

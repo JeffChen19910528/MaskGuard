@@ -159,6 +159,36 @@ def test_api_key_tokenization_mismatch_still_detected_as_residual():
     assert result.status == "FAILED"
 
 
+def test_regex_rematch_catches_canonical_phone_type_after_alias_rewrite():
+    """Phase 6.3 regression: `detection.type` can now be the canonical
+    "Phone" (e.g. originally from ContextDetector, or from RegexDetector's
+    "PhoneTW" already canonicalized upstream) while a fresh RegexDetector()
+    call on the re-OCR crop still reports its own raw "PhoneTW" type. The
+    (b)/(c) rematch comparison must canonicalize that fresh result too, or it
+    silently stops catching residual phone numbers post-canonicalization."""
+    detection = Detection(
+        type="Phone",
+        text="0912345678",
+        confidence=0.85,
+        bounding_box=BoundingBox(10, 10, 150, 20),
+        risk_score=0.47,
+        risk_level=RiskLevel.MEDIUM,
+        action=RedactionAction.NONE,  # never actually redacted
+    )
+    # Re-OCR reads a DIFFERENT Taiwan phone number in the crop (still clearly
+    # a phone number RegexDetector's PhoneTW pattern matches).
+    fake_verification_ocr = _FakeOcrEngine([_tok("0987654321")])
+    engine = VerificationEngine(fake_verification_ocr, RedactionEngine(), max_retries=1)
+
+    image = Image.new("RGB", (300, 100), (255, 255, 255))
+    redacted, result = engine.verify_and_fix(image, [detection], ["en"])
+
+    assert result.status == "FAILED", (
+        "canonical-type rematch must still be recognized as the same "
+        "sensitive category despite RegexDetector's raw 'PhoneTW' label"
+    )
+
+
 def test_regex_rematch_catches_same_type_value_with_different_text():
     """(b)/(c): even if the normalized-substring check somehow missed it, a
     fresh regex re-detection of the SAME sensitive type in the crop must

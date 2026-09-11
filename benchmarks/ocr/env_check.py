@@ -10,6 +10,7 @@ from __future__ import annotations
 import shutil
 import sys
 from dataclasses import dataclass, field
+from pathlib import Path
 
 
 @dataclass
@@ -100,3 +101,91 @@ def check_paddleocr_available() -> tuple[bool, str | None]:
     except ImportError as exc:
         return False, f"paddleocr package not importable: {exc}"
     return True, None
+
+
+@dataclass
+class PaddleEnvironmentReport:
+    """Phase 7 environment inspection — never installs or modifies anything."""
+
+    python_version: str
+    paddlepaddle_importable: bool
+    paddleocr_importable: bool
+    paddlepaddle_version: str | None = None
+    paddleocr_version: str | None = None
+    device: str | None = None  # "gpu" or "cpu"
+    gpu_count: int = 0
+    model_cache_dir: str | None = None
+    errors: list[str] = field(default_factory=list)
+
+    @property
+    def ready(self) -> bool:
+        return self.paddlepaddle_importable and self.paddleocr_importable
+
+    def missing_summary(self) -> str:
+        if self.ready:
+            return "environment ready"
+        missing = []
+        if not self.paddlepaddle_importable:
+            missing.append("paddlepaddle package not importable")
+        if not self.paddleocr_importable:
+            missing.append("paddleocr package not importable")
+        if self.errors:
+            missing.append("; ".join(self.errors))
+        return " | ".join(missing)
+
+
+def check_paddleocr_environment() -> PaddleEnvironmentReport:
+    """Reports PaddlePaddle/PaddleOCR versions, CPU/GPU, and the model cache
+    location — WITHOUT downloading a model or running inference (that only
+    happens the first time `PaddleOcrEngine.recognize()` is actually called).
+    """
+    python_version = sys.version.split()[0]
+    errors: list[str] = []
+
+    paddlepaddle_version: str | None = None
+    device: str | None = None
+    gpu_count = 0
+    try:
+        import paddle  # noqa: PLC0415
+
+        paddlepaddle_importable = True
+        paddlepaddle_version = getattr(paddle, "__version__", "unknown")
+        try:
+            gpu_count = paddle.device.cuda.device_count() if paddle.is_compiled_with_cuda() else 0
+        except Exception as exc:  # pragma: no cover - defensive, CPU-only builds vary in what they expose
+            errors.append(f"GPU device query failed: {exc}")
+        device = "gpu" if gpu_count > 0 else "cpu"
+    except ImportError as exc:
+        paddlepaddle_importable = False
+        errors.append(f"paddlepaddle import failed: {exc}")
+
+    paddleocr_version: str | None = None
+    try:
+        import paddleocr  # noqa: PLC0415
+
+        paddleocr_importable = True
+        paddleocr_version = getattr(paddleocr, "__version__", "unknown")
+    except ImportError as exc:
+        paddleocr_importable = False
+        errors.append(f"paddleocr import failed: {exc}")
+
+    # PaddleOCR/PaddleX cache their downloaded model weights under the
+    # invoking user's home directory by default (never inside this repo).
+    cache_candidates = [
+        Path.home() / ".paddleocr",
+        Path.home() / ".paddlex",
+        Path.home() / ".paddlehub",
+    ]
+    model_cache_dir = next((str(p) for p in cache_candidates if p.exists()), None)
+
+    return PaddleEnvironmentReport(
+        python_version=python_version,
+        paddlepaddle_importable=paddlepaddle_importable,
+        paddleocr_importable=paddleocr_importable,
+        paddlepaddle_version=paddlepaddle_version,
+        paddleocr_version=paddleocr_version,
+        device=device,
+        gpu_count=gpu_count,
+        model_cache_dir=model_cache_dir,
+        errors=errors,
+    )

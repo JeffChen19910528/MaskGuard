@@ -3,6 +3,11 @@ CLAUDE.md
 .claude_recovery/
 .claude/
 Skill.md
+# Phase-by-phase development docs (ADRs, phase reports, architecture
+# proposals) written during AI-assisted development — internal working
+# notes, not published project documentation. README.md is the public
+# entry point instead.
+docs/
 
 # Python
 __pycache__/
@@ -20,3 +25,19 @@ venv/
 # OS
 .DS_Store
 Thumbs.db
+
+# Frontend (Phase 8.2)
+frontend/node_modules/
+frontend/dist/
+frontend/.env.local
+frontend/coverage/
+frontend/*.tsbuildinfo
+
+# Phase 9: Docker deployment secrets/certs — operator-provided, NEVER committed
+.env
+.env.production.local
+secrets/
+certs/
+*.pem
+*.key
+*.crt

@@ -1,0 +1,48 @@
+section,metric,tesseract,paddleocr
+overall,approx_peak_rss_mb,97.4140625,546.05859375
+overall,images,51,51
+overall,mean_cer,0.35056283521260934,0.35866251490062373
+overall,mean_iou,0.8662751619973272,0.7733297389158882
+overall,mean_ocr_time_s,0.5009580568625026,0.46306231764416833
+overall,mean_precision,1.0,0.8809523809523809
+overall,mean_recall,1.0,0.7836879432624114
+overall,mean_text_accuracy,0.6555590705632759,0.6413374850993759
+overall,mean_total_time_s,1.4708003509771443,1.0955964999944519
+overall,total_false_negatives,0,11
+overall,total_false_positives,0,5
+overall,total_verification_false_pass,0,5
+recall_by_type,APIKey,1.0,0.0
+recall_by_type,Address,1.0,1.0
+recall_by_type,BankAccount,1.0,1.0
+recall_by_type,CreditCard,1.0,1.0
+recall_by_type,Email,1.0,1.0
+recall_by_type,Passport,1.0,1.0
+recall_by_type,Password,1.0,0.0
+recall_by_type,PhoneTW,1.0,1.0
+recall_by_type,TaiwanID,1.0,1.0
+recall_by_condition,"Mixed Language (plain text, OCR-only).cer",0.19047619047619047,0.19047619047619047
+recall_by_condition,"Mixed Language (plain text, OCR-only).recall",,
+recall_by_condition,"Mixed Language (plain text, OCR-only).text_accuracy",0.8095238095238095,0.8095238095238095
+recall_by_condition,Traditional Chinese (labeled field).cer,1.0,0.8333333333333334
+recall_by_condition,Traditional Chinese (labeled field).recall,1.0,1.0
+recall_by_condition,Traditional Chinese (labeled field).text_accuracy,0.0,0.16666666666666663
+recall_by_condition,"Traditional Chinese (plain text, OCR-only).cer",1.0769230769230769,0.9615384615384616
+recall_by_condition,"Traditional Chinese (plain text, OCR-only).recall",,
+recall_by_condition,"Traditional Chinese (plain text, OCR-only).text_accuracy",0.0,0.038461538461538436
+recall_by_condition,blurred.cer,0.3278929509095676,0.3325435517644382
+recall_by_condition,blurred.recall,1.0,0.7777777777777778
+recall_by_condition,blurred.text_accuracy,0.6721070490904324,0.6674564482355618
+recall_by_condition,clean.cer,0.28366070973168156,0.32771263389004207
+recall_by_condition,clean.recall,1.0,0.7777777777777778
+recall_by_condition,clean.text_accuracy,0.7163392902683184,0.672287366109958
+recall_by_condition,font_large.cer,0.3395450230755005,0.32771263389004207
+recall_by_condition,font_large.recall,1.0,0.7777777777777778
+recall_by_condition,font_large.text_accuracy,0.6735268723493361,0.672287366109958
+recall_by_condition,low_res.cer,0.3306162624564085,0.3422053875132305
+recall_by_condition,low_res.recall,1.0,0.7777777777777778
+recall_by_condition,low_res.text_accuracy,0.6693837375435914,0.6577946124867696
+recall_by_condition,rotated.cer,0.3300675172211831,0.3422053875132305
+recall_by_condition,rotated.recall,1.0,0.7777777777777778
+recall_by_condition,rotated.text_accuracy,0.6830043782036536,0.6577946124867696
+cold_vs_warm,cold_start_ocr_time_s,0.4803259999898728,1.4760208000079729
+cold_vs_warm,warm_mean_ocr_time_s,0.5013706979999552,0.44280314799689224

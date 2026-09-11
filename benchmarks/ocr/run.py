@@ -3,6 +3,13 @@
 Generates the synthetic dataset (if not already present), runs it through
 every available OCR engine (Tesseract always; PaddleOCR only if installed),
 and writes benchmarks/results/ocr_benchmark_<date>.{json,csv}.
+
+`--engines Tesseract` / `--engines PaddleOCR` restricts the run to one named
+engine (Phase 7: PaddleOCR lives in its own isolated venv, so a single
+invocation there should never also try to run Tesseract). Combine with
+`--skip-generate --dataset-dir <existing dir>` to run a different engine
+against the EXACT SAME already-generated dataset/ground-truth another run
+used, which is required for the two engines' results to be comparable.
 """
 from __future__ import annotations
 
@@ -41,13 +48,26 @@ def main() -> int:
     parser.add_argument("--results-dir", default=str(Path(__file__).resolve().parent.parent / "results"))
     parser.add_argument("--skip-generate", action="store_true", help="Reuse an existing dataset directory")
     parser.add_argument("--suffix", default="", help="Appended to the output filename, e.g. _hardened")
+    parser.add_argument(
+        "--engines",
+        default=None,
+        help="Comma-separated subset of engine names to run, e.g. 'Tesseract' or 'PaddleOCR' "
+        "(default: run every engine that's ready/available, same as before this flag existed). "
+        "Lets a controlled Tesseract-vs-PaddleOCR comparison (Phase 7) run each engine from its "
+        "own environment/venv without the other engine's absence/presence changing anything else.",
+    )
     args = parser.parse_args()
+    requested_engines = {name.strip() for name in args.engines.split(",")} if args.engines else None
 
-    tesseract_report = check_tesseract_environment()
-    print(f"Tesseract ready: {tesseract_report.ready} ({tesseract_report.missing_summary()})")
-    if not tesseract_report.ready:
-        print("Tesseract is required for this benchmark run. Aborting.")
-        return 1
+    want_tesseract = requested_engines is None or "Tesseract" in requested_engines
+    want_paddle = requested_engines is None or "PaddleOCR" in requested_engines
+
+    if want_tesseract:
+        tesseract_report = check_tesseract_environment()
+        print(f"Tesseract ready: {tesseract_report.ready} ({tesseract_report.missing_summary()})")
+        if not tesseract_report.ready:
+            print("Tesseract is required for this benchmark run. Aborting.")
+            return 1
 
     if not args.skip_generate:
         print(f"Generating synthetic dataset -> {args.dataset_dir}")
@@ -60,13 +80,16 @@ def main() -> int:
     ground_truth_values = _ground_truth_values_by_image(items)
 
     all_rows = []
-    engines = [("Tesseract", TesseractOcrEngine())]
+    engines = []
+    if want_tesseract:
+        engines.append(("Tesseract", TesseractOcrEngine()))
 
-    paddle_available, paddle_reason = check_paddleocr_available()
-    if paddle_available:
-        engines.append(("PaddleOCR", PaddleOcrEngine()))
-    else:
-        print(f"PaddleOCR not included in this run: {paddle_reason}")
+    if want_paddle:
+        paddle_available, paddle_reason = check_paddleocr_available()
+        if paddle_available:
+            engines.append(("PaddleOCR", PaddleOcrEngine()))
+        else:
+            print(f"PaddleOCR not included in this run: {paddle_reason}")
 
     for engine_name, engine in engines:
         print(f"\nRunning benchmark for engine: {engine_name}")

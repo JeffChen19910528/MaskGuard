@@ -135,7 +135,13 @@ _MAJOR_SENSITIVE_LINES: dict[str, tuple[str, str, str]] = {
     "BankAccount": ("銀行帳號：1234567890123", "BankAccount", "1234567890123"),
     "CreditCard": ("信用卡：4111 1111 1111 1111", "CreditCard", "4111 1111 1111 1111"),
     "Email": ("Email：demo.test.user@example.com", "Email", "demo.test.user@example.com"),
-    "PhoneTW": ("電話：0912345678", "PhoneTW", "0912345678"),
+    # Category key/filename stay "PhoneTW" (still Taiwan-mobile-specific test
+    # data), but the ground-truth sensitive TYPE is the Phase 6.3 canonical
+    # "Phone" — RegexDetector's raw "PhoneTW" output is rewritten to "Phone"
+    # by canonicalize_types() before match_detections() ever compares types
+    # (see runner.py), so ground truth must say "Phone" too or every phone
+    # detection would count as both a false negative and a false positive.
+    "PhoneTW": ("電話：0912345678", "Phone", "0912345678"),
     "APIKey": ("API_KEY=demo_test_key_123456789", "SecretKeyValue", "demo_test_key_123456789"),
     "Password": ("password: demo_test_pw_123456", "SecretKeyValue", "demo_test_pw_123456"),
     "Address": ("地址：台北市中正區忠孝東路100號", "Address", "台北市中正區忠孝東路100號"),
@@ -164,7 +170,7 @@ _MULTIPLE_SENSITIVE_LINES = [
 ]
 _MULTIPLE_SENSITIVE_EXPECTED = [
     ("PersonalName", "王小明"),
-    ("PhoneTW", "0912345678"),
+    ("Phone", "0912345678"),  # canonical type (Phase 6.3) — see _MAJOR_SENSITIVE_LINES note above
     ("Email", "demo@example.com"),
     ("TaiwanID", "A123456789"),
     ("CreditCard", "4111 1111 1111 1111"),

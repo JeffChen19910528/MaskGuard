@@ -64,3 +64,34 @@ def test_pipeline_processes_image_and_writes_outputs(tmp_path):
     log_content = log_path.read_text(encoding="utf-8")
     assert "john@example.com" not in log_content
     assert "hunter2secret" not in log_content
+
+
+def test_pipeline_merges_regex_and_context_phone_into_one_canonical_finding(tmp_path):
+    """Phase 6.3: RegexDetector's "PhoneTW" and ContextDetector's "Phone" hit
+    on the same Taiwan phone number must reach the report as ONE "Phone"
+    finding, not two differently-typed duplicates (the Phase 6.2 benchmark's
+    5 confirmed false positives)."""
+    image_path = tmp_path / "input.png"
+    image = Image.new("RGB", (300, 100), (255, 255, 255))
+    ImageDraw.Draw(image).rectangle((0, 0, 299, 99), outline=(0, 0, 0))
+    image.save(image_path)
+
+    config = load_config()
+    config.masking.verification = False
+
+    tokens = [
+        OcrToken("電話：", 0.9, BoundingBox(5, 5, 50, 20)),
+        OcrToken("0912345678", 0.9, BoundingBox(60, 5, 100, 20)),
+    ]
+    fake_ocr = FakeOcrEngine(tokens)
+    pipeline = Pipeline(config, ocr_engine=fake_ocr)
+
+    output_image = tmp_path / "out" / "input_masked.png"
+    report_path = tmp_path / "out" / "input_masked.json"
+    log_path = tmp_path / "out" / "audit.log"
+
+    result = pipeline.process(str(image_path), str(output_image), str(report_path), str(log_path))
+
+    phone_detections = [d for d in result.report["detections"] if d["type"] == "Phone"]
+    assert len(phone_detections) == 1, f"expected exactly one merged Phone finding, got {phone_detections}"
+    assert not any(d["type"] == "PhoneTW" for d in result.report["detections"])

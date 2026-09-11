@@ -78,3 +78,4 @@ class Detection:
     source_layers: list[str] = field(default_factory=list)
     unknown: bool = False  # True when AI/keyword flagged risk but classification is uncertain
     needs_review: bool = False  # set by the Policy Engine's fail-safe path (§18)
+    source_type: str | None = None  # pre-canonicalization type, e.g. "PhoneTW" (Phase 6.3 §5)

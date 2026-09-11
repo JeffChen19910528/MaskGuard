@@ -1,0 +1,1098 @@
+{
+  "psm_sweep": [
+    {
+      "label": "baseline_no_override",
+      "tesseract_config": "",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": ":PA1234567",
+          "confidence": 0.7,
+          "bbox": {
+            "x": 97,
+            "y": 26,
+            "w": 174,
+            "h": 23
+          }
+        },
+        {
+          "text": "aan",
+          "confidence": 0.1,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "-",
+          "confidence": 0.48,
+          "bbox": {
+            "x": 97,
+            "y": 46,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        }
+      ],
+      "recognized_text": ":PA1234567 aan - = AB",
+      "exact_value_token_present": false,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.1666666666666667,
+      "ocr_time_s": 0.15724221299999996,
+      "wall_time_s": 0.4877,
+      "security_outcome": "UNSAFE"
+    },
+    {
+      "label": "psm3_explicit",
+      "tesseract_config": "--psm 3",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": ":PA1234567",
+          "confidence": 0.7,
+          "bbox": {
+            "x": 97,
+            "y": 26,
+            "w": 174,
+            "h": 23
+          }
+        },
+        {
+          "text": "aan",
+          "confidence": 0.1,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "-",
+          "confidence": 0.48,
+          "bbox": {
+            "x": 97,
+            "y": 46,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        }
+      ],
+      "recognized_text": ":PA1234567 aan - = AB",
+      "exact_value_token_present": false,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.1666666666666667,
+      "ocr_time_s": 0.1595052060000004,
+      "wall_time_s": 0.4974,
+      "security_outcome": "UNSAFE"
+    },
+    {
+      "label": "psm6",
+      "tesseract_config": "--psm 6",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": "護照",
+          "confidence": 0.93,
+          "bbox": {
+            "x": 26,
+            "y": 24,
+            "w": 56,
+            "h": 27
+          }
+        },
+        {
+          "text": ":",
+          "confidence": 0.89,
+          "bbox": {
+            "x": 103,
+            "y": 32,
+            "w": 1,
+            "h": 17
+          }
+        },
+        {
+          "text": "PA1234567",
+          "confidence": 0.91,
+          "bbox": {
+            "x": 117,
+            "y": 26,
+            "w": 154,
+            "h": 23
+          }
+        }
+      ],
+      "recognized_text": "護照 : PA1234567",
+      "exact_value_token_present": true,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 1.0,
+      "true_positives": 1,
+      "false_negatives": 0,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": false,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 0.25,
+      "ocr_time_s": 0.15299030300000016,
+      "wall_time_s": 0.7214,
+      "security_outcome": "SAFE"
+    },
+    {
+      "label": "psm11",
+      "tesseract_config": "--psm 11",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": "護照",
+          "confidence": 0.55,
+          "bbox": {
+            "x": 26,
+            "y": 24,
+            "w": 75,
+            "h": 19
+          }
+        },
+        {
+          "text": "[EE",
+          "confidence": 0.33,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "PA1234567",
+          "confidence": 0.87,
+          "bbox": {
+            "x": 117,
+            "y": 26,
+            "w": 154,
+            "h": 23
+          }
+        }
+      ],
+      "recognized_text": "護照 [EE PA1234567",
+      "exact_value_token_present": true,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 0.4166666666666667,
+      "ocr_time_s": 0.15294415499999925,
+      "wall_time_s": 0.4954,
+      "security_outcome": "UNSAFE"
+    },
+    {
+      "label": "psm12",
+      "tesseract_config": "--psm 12",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": "PA1234567",
+          "confidence": 0.87,
+          "bbox": {
+            "x": 117,
+            "y": 26,
+            "w": 154,
+            "h": 23
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        },
+        {
+          "text": "~",
+          "confidence": 0.74,
+          "bbox": {
+            "x": 26,
+            "y": 24,
+            "w": 8,
+            "h": 5
+          }
+        },
+        {
+          "text": "4",
+          "confidence": 0.66,
+          "bbox": {
+            "x": 27,
+            "y": 32,
+            "w": 7,
+            "h": 2
+          }
+        },
+        {
+          "text": "Ey",
+          "confidence": 0.35,
+          "bbox": {
+            "x": 27,
+            "y": 36,
+            "w": 7,
+            "h": 2
+          }
+        },
+        {
+          "text": "aS",
+          "confidence": 0.0,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 24,
+            "h": 10
+          }
+        },
+        {
+          "text": "An",
+          "confidence": 0.0,
+          "bbox": {
+            "x": 56,
+            "y": 44,
+            "w": 26,
+            "h": 7
+          }
+        }
+      ],
+      "recognized_text": "PA1234567 = AB ~ 4 Ey aS An",
+      "exact_value_token_present": true,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.75,
+      "ocr_time_s": 0.19515029600000044,
+      "wall_time_s": 0.5906,
+      "security_outcome": "UNSAFE"
+    }
+  ],
+  "oem_sweep": [
+    {
+      "label": "oem_default_(baseline)__psm_baseline",
+      "tesseract_config": "",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": ":PA1234567",
+          "confidence": 0.7,
+          "bbox": {
+            "x": 97,
+            "y": 26,
+            "w": 174,
+            "h": 23
+          }
+        },
+        {
+          "text": "aan",
+          "confidence": 0.1,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "-",
+          "confidence": 0.48,
+          "bbox": {
+            "x": 97,
+            "y": 46,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        }
+      ],
+      "recognized_text": ":PA1234567 aan - = AB",
+      "exact_value_token_present": false,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.1666666666666667,
+      "ocr_time_s": 0.16038654400000052,
+      "wall_time_s": 0.498,
+      "security_outcome": "UNSAFE"
+    },
+    {
+      "label": "oem1_lstm_only__psm_baseline",
+      "tesseract_config": "--oem 1",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": ":PA1234567",
+          "confidence": 0.7,
+          "bbox": {
+            "x": 97,
+            "y": 26,
+            "w": 174,
+            "h": 23
+          }
+        },
+        {
+          "text": "aan",
+          "confidence": 0.1,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "-",
+          "confidence": 0.48,
+          "bbox": {
+            "x": 97,
+            "y": 46,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        }
+      ],
+      "recognized_text": ":PA1234567 aan - = AB",
+      "exact_value_token_present": false,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.1666666666666667,
+      "ocr_time_s": 0.16705298399999968,
+      "wall_time_s": 0.4799,
+      "security_outcome": "UNSAFE"
+    },
+    {
+      "label": "oem3_default_explicit__psm_baseline",
+      "tesseract_config": "--oem 3",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": ":PA1234567",
+          "confidence": 0.7,
+          "bbox": {
+            "x": 97,
+            "y": 26,
+            "w": 174,
+            "h": 23
+          }
+        },
+        {
+          "text": "aan",
+          "confidence": 0.1,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "-",
+          "confidence": 0.48,
+          "bbox": {
+            "x": 97,
+            "y": 46,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        }
+      ],
+      "recognized_text": ":PA1234567 aan - = AB",
+      "exact_value_token_present": false,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.1666666666666667,
+      "ocr_time_s": 0.15167293500000056,
+      "wall_time_s": 0.4807,
+      "security_outcome": "UNSAFE"
+    },
+    {
+      "label": "oem_default_(baseline)__psm6",
+      "tesseract_config": "--psm 6",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": "護照",
+          "confidence": 0.93,
+          "bbox": {
+            "x": 26,
+            "y": 24,
+            "w": 56,
+            "h": 27
+          }
+        },
+        {
+          "text": ":",
+          "confidence": 0.89,
+          "bbox": {
+            "x": 103,
+            "y": 32,
+            "w": 1,
+            "h": 17
+          }
+        },
+        {
+          "text": "PA1234567",
+          "confidence": 0.91,
+          "bbox": {
+            "x": 117,
+            "y": 26,
+            "w": 154,
+            "h": 23
+          }
+        }
+      ],
+      "recognized_text": "護照 : PA1234567",
+      "exact_value_token_present": true,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 1.0,
+      "true_positives": 1,
+      "false_negatives": 0,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": false,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 0.25,
+      "ocr_time_s": 0.13500193399999993,
+      "wall_time_s": 0.7018,
+      "security_outcome": "SAFE"
+    },
+    {
+      "label": "oem1_lstm_only__psm6",
+      "tesseract_config": "--psm 6 --oem 1",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": "護照",
+          "confidence": 0.93,
+          "bbox": {
+            "x": 26,
+            "y": 24,
+            "w": 56,
+            "h": 27
+          }
+        },
+        {
+          "text": ":",
+          "confidence": 0.89,
+          "bbox": {
+            "x": 103,
+            "y": 32,
+            "w": 1,
+            "h": 17
+          }
+        },
+        {
+          "text": "PA1234567",
+          "confidence": 0.91,
+          "bbox": {
+            "x": 117,
+            "y": 26,
+            "w": 154,
+            "h": 23
+          }
+        }
+      ],
+      "recognized_text": "護照 : PA1234567",
+      "exact_value_token_present": true,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 1.0,
+      "true_positives": 1,
+      "false_negatives": 0,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": false,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 0.25,
+      "ocr_time_s": 0.14114279700000054,
+      "wall_time_s": 0.7247,
+      "security_outcome": "SAFE"
+    },
+    {
+      "label": "oem3_default_explicit__psm6",
+      "tesseract_config": "--psm 6 --oem 3",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": "護照",
+          "confidence": 0.93,
+          "bbox": {
+            "x": 26,
+            "y": 24,
+            "w": 56,
+            "h": 27
+          }
+        },
+        {
+          "text": ":",
+          "confidence": 0.89,
+          "bbox": {
+            "x": 103,
+            "y": 32,
+            "w": 1,
+            "h": 17
+          }
+        },
+        {
+          "text": "PA1234567",
+          "confidence": 0.91,
+          "bbox": {
+            "x": 117,
+            "y": 26,
+            "w": 154,
+            "h": 23
+          }
+        }
+      ],
+      "recognized_text": "護照 : PA1234567",
+      "exact_value_token_present": true,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 1.0,
+      "true_positives": 1,
+      "false_negatives": 0,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": false,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 0.25,
+      "ocr_time_s": 0.1370936510000007,
+      "wall_time_s": 0.6842,
+      "security_outcome": "SAFE"
+    }
+  ],
+  "language_sweep": [
+    {
+      "label": "chi_tra+eng_(baseline)",
+      "tesseract_config": "",
+      "languages": [
+        "zh-TW",
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": ":PA1234567",
+          "confidence": 0.7,
+          "bbox": {
+            "x": 97,
+            "y": 26,
+            "w": 174,
+            "h": 23
+          }
+        },
+        {
+          "text": "aan",
+          "confidence": 0.1,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "-",
+          "confidence": 0.48,
+          "bbox": {
+            "x": 97,
+            "y": 46,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        }
+      ],
+      "recognized_text": ":PA1234567 aan - = AB",
+      "exact_value_token_present": false,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.1666666666666667,
+      "ocr_time_s": 0.15362222999999986,
+      "wall_time_s": 0.4673,
+      "security_outcome": "UNSAFE"
+    },
+    {
+      "label": "eng_only",
+      "tesseract_config": "",
+      "languages": [
+        "en"
+      ],
+      "tokens": [
+        {
+          "text": ":",
+          "confidence": 0.67,
+          "bbox": {
+            "x": 97,
+            "y": 32,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "PA1234567",
+          "confidence": 0.89,
+          "bbox": {
+            "x": 117,
+            "y": 26,
+            "w": 154,
+            "h": 23
+          }
+        },
+        {
+          "text": "aan",
+          "confidence": 0.1,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "-",
+          "confidence": 0.48,
+          "bbox": {
+            "x": 97,
+            "y": 46,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        }
+      ],
+      "recognized_text": ": PA1234567 aan - = AB",
+      "exact_value_token_present": true,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.1666666666666667,
+      "ocr_time_s": 0.0769980540000006,
+      "wall_time_s": 0.2335,
+      "security_outcome": "UNSAFE"
+    },
+    {
+      "label": "eng+osd",
+      "tesseract_config": "",
+      "languages": [
+        "en",
+        "osd"
+      ],
+      "tokens": [
+        {
+          "text": ":",
+          "confidence": 0.67,
+          "bbox": {
+            "x": 97,
+            "y": 32,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "PA1234567",
+          "confidence": 0.89,
+          "bbox": {
+            "x": 117,
+            "y": 26,
+            "w": 154,
+            "h": 23
+          }
+        },
+        {
+          "text": "aan",
+          "confidence": 0.1,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "-",
+          "confidence": 0.48,
+          "bbox": {
+            "x": 97,
+            "y": 46,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        }
+      ],
+      "recognized_text": ": PA1234567 aan - = AB",
+      "exact_value_token_present": true,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.1666666666666667,
+      "ocr_time_s": 0.12870667199999986,
+      "wall_time_s": 0.3964,
+      "security_outcome": "UNSAFE"
+    },
+    {
+      "label": "chi_tra+eng+osd",
+      "tesseract_config": "",
+      "languages": [
+        "zh-TW",
+        "en",
+        "osd"
+      ],
+      "tokens": [
+        {
+          "text": ":PA1234567",
+          "confidence": 0.7,
+          "bbox": {
+            "x": 97,
+            "y": 26,
+            "w": 174,
+            "h": 23
+          }
+        },
+        {
+          "text": "aan",
+          "confidence": 0.1,
+          "bbox": {
+            "x": 27,
+            "y": 41,
+            "w": 55,
+            "h": 10
+          }
+        },
+        {
+          "text": "-",
+          "confidence": 0.48,
+          "bbox": {
+            "x": 97,
+            "y": 46,
+            "w": 4,
+            "h": 3
+          }
+        },
+        {
+          "text": "=",
+          "confidence": 0.56,
+          "bbox": {
+            "x": 35,
+            "y": 24,
+            "w": 13,
+            "h": 18
+          }
+        },
+        {
+          "text": "AB",
+          "confidence": 0.44,
+          "bbox": {
+            "x": 57,
+            "y": 25,
+            "w": 24,
+            "h": 18
+          }
+        }
+      ],
+      "recognized_text": ":PA1234567 aan - = AB",
+      "exact_value_token_present": false,
+      "deskew_applied": false,
+      "deskew_angle_degrees": 0.0,
+      "recall": 0.0,
+      "true_positives": 0,
+      "false_negatives": 1,
+      "false_positives": 0,
+      "verification_status": "PASSED",
+      "verification_false_pass": true,
+      "sanity_scan_triggered": false,
+      "sanity_scan_found_types": "",
+      "cer": 1.1666666666666667,
+      "ocr_time_s": 0.20984585899999963,
+      "wall_time_s": 0.6392,
+      "security_outcome": "UNSAFE"
+    }
+  ]
+}

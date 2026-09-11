@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from benchmarks.ocr.env_check import check_tesseract_environment
+from benchmarks.ocr.env_check import check_paddleocr_environment, check_tesseract_environment
 
 
 def pytest_collection_modifyitems(items):
@@ -21,6 +21,14 @@ def pytest_collection_modifyitems(items):
 @pytest.fixture(scope="session")
 def tesseract_env():
     report = check_tesseract_environment()
+    if not report.ready:
+        pytest.skip(f"ENVIRONMENT NOT READY: {report.missing_summary()}")
+    return report
+
+
+@pytest.fixture(scope="session")
+def paddle_env():
+    report = check_paddleocr_environment()
     if not report.ready:
         pytest.skip(f"ENVIRONMENT NOT READY: {report.missing_summary()}")
     return report

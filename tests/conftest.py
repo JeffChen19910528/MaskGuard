@@ -2,6 +2,12 @@ from __future__ import annotations
 
 from maskguard.models import BoundingBox, OcrToken
 
+# Phase 10.6: exposes `redis_container`/`redis_url`/`redis_namespace` to
+# every test in the tree (mirrors how `ocr_env` is available via
+# tests/api/conftest.py) — a real, ephemeral Redis container, skipped
+# (not failed) when Docker is unavailable.
+pytest_plugins = ["tests.redis_env"]
+
 
 def tok(text: str, x: int, y: int = 0, width: int | None = None, height: int = 20) -> OcrToken:
     if width is None:
